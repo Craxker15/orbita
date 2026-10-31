@@ -13,6 +13,7 @@ from orbita.domain.errors import ConfigError
 from orbita.domain.observer import GroundPoint, Observer
 from orbita.ui.map_view import (
     OBSERVER_LAYER_ID,
+    OCEAN_LAYER_ID,
     SATELLITE_LAYER_ID,
     TRACK_LAYER_ID,
     build_deck,
@@ -72,9 +73,14 @@ def test_track_path_has_one_pair_per_point() -> None:
     assert path[0] == [0.0, 0.0]
 
 
-def test_deck_has_three_layers_without_an_observer() -> None:
+def test_deck_has_the_base_layers_without_an_observer() -> None:
     deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []})
-    assert [layer.id for layer in deck.layers] == ["basemap", TRACK_LAYER_ID, SATELLITE_LAYER_ID]
+    assert [layer.id for layer in deck.layers] == [
+        OCEAN_LAYER_ID,
+        "basemap",
+        TRACK_LAYER_ID,
+        SATELLITE_LAYER_ID,
+    ]
 
 
 def test_deck_adds_the_observer_layer_when_the_location_is_known() -> None:

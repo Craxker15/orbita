@@ -13,6 +13,21 @@ from orbita.domain.errors import ConfigError
 from orbita.domain.observer import GroundPoint, Observer
 
 BASEMAP_LAYER_ID: Final = "basemap"
+OCEAN_LAYER_ID: Final = "ocean"
+# One polygon covering the whole planet: the sea color under the country outlines (offline).
+OCEAN_FEATURES: Final[dict[str, Any]] = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]],
+            },
+        }
+    ],
+}
 TRACK_LAYER_ID: Final = "iss_track"
 SATELLITE_LAYER_ID: Final = "satellites"
 OBSERVER_LAYER_ID: Final = "observer"
@@ -61,11 +76,21 @@ def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any
     layers: list[Any] = [
         pydeck.Layer(
             "GeoJsonLayer",
+            id=OCEAN_LAYER_ID,
+            data=OCEAN_FEATURES,
+            stroked=False,
+            filled=True,
+            get_fill_color=[18, 58, 104],
+            pickable=False,
+        ),
+        pydeck.Layer(
+            "GeoJsonLayer",
             id=BASEMAP_LAYER_ID,
             data=basemap,
             stroked=True,
-            filled=False,
-            get_line_color=[120, 120, 120],
+            filled=True,
+            get_fill_color=[78, 124, 74],
+            get_line_color=[150, 190, 140],
             get_line_width=1,
             line_width_min_pixels=1,
             pickable=False,
@@ -86,7 +111,7 @@ def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any
             get_position="position",
             get_fill_color=[0, 200, 255],
             get_radius=SATELLITE_RADIUS_M,
-            radius_min_pixels=5,
+            radius_min_pixels=7,
             pickable=True,
             auto_highlight=True,
         ),
