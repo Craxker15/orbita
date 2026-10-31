@@ -229,7 +229,7 @@ orbita/
 
 ## 8. Configuración
 
-- Un solo archivo: `.env` en la raíz (nunca se versiona), cargado con `python-dotenv` solo en `orbita.settings`.
+- Un solo archivo: `.env` en la raíz (nunca se versiona), leído con una función propia en `orbita.settings`. Sin `python-dotenv` (SEC-39; spec 009).
   `.env.example` lista las variables con sus valores por defecto.
 - `orbita.settings` valida los valores al arrancar y produce un `Settings` inmutable que `orbita.main` inyecta.
   Valor inválido → `ConfigError` con el nombre de la variable.
