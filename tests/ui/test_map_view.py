@@ -1,0 +1,92 @@
+"""Tests of the pure map functions: no Streamlit needed (spec 015)."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from orbita.app.live_view import LiveView, SatelliteView
+from orbita.domain.elements import Freshness, OrbitType
+from orbita.domain.errors import ConfigError
+from orbita.domain.observer import GroundPoint, Observer
+from orbita.ui.map_view import (
+    OBSERVER_LAYER_ID,
+    SATELLITE_LAYER_ID,
+    TRACK_LAYER_ID,
+    build_deck,
+    load_basemap,
+    satellite_rows,
+    track_path,
+)
+
+
+def satellite(norad: int = 25544) -> SatelliteView:
+    return SatelliteView(
+        norad=norad,
+        name="ISS (ZARYA)",
+        point=GroundPoint(latitude=10.0, longitude=-75.0, altitude_km=420.0),
+        speed_km_s=7.66,
+        orbit_type=OrbitType.LOW,
+        period_minutes=93,
+        distance_km=None,
+        owner_code=None,
+        launch_date=None,
+    )
+
+
+def view(track: tuple[GroundPoint, ...] = ()) -> LiveView:
+    return LiveView(
+        freshness=Freshness.NORMAL,
+        downloaded_text="2026-10-30 07:00",
+        age_days=0,
+        satellites=(satellite(),),
+        missing_norad=(),
+        iss_track=track,
+    )
+
+
+def test_load_basemap_accepts_a_feature_collection(tmp_path: Path) -> None:
+    path = tmp_path / "countries.geojson"
+    path.write_text(json.dumps({"type": "FeatureCollection", "features": []}), encoding="utf-8")
+    assert load_basemap(path)["type"] == "FeatureCollection"
+
+
+def test_load_basemap_rejects_other_json(tmp_path: Path) -> None:
+    path = tmp_path / "countries.geojson"
+    path.write_text(json.dumps({"type": "Feature"}), encoding="utf-8")
+    with pytest.raises(ConfigError):
+        load_basemap(path)
+
+
+def test_satellite_rows_put_longitude_first() -> None:
+    assert satellite_rows(view())[0]["position"] == [-75.0, 10.0]
+
+
+def test_track_path_has_one_pair_per_point() -> None:
+    track = tuple(GroundPoint(latitude=0.0, longitude=float(index)) for index in range(91))
+    path = track_path(track)
+    assert len(path) == 91
+    assert path[0] == [0.0, 0.0]
+
+
+def test_deck_has_three_layers_without_an_observer() -> None:
+    deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []})
+    assert [layer.id for layer in deck.layers] == ["basemap", TRACK_LAYER_ID, SATELLITE_LAYER_ID]
+
+
+def test_deck_adds_the_observer_layer_when_the_location_is_known() -> None:
+    deck = build_deck(
+        view(),
+        Observer(latitude=3.45, longitude=-76.53),
+        {"type": "FeatureCollection", "features": []},
+    )
+    assert OBSERVER_LAYER_ID in [layer.id for layer in deck.layers]
+
+
+def test_deck_tooltip_is_plain_text_and_no_tiles_are_requested() -> None:
+    deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []})
+    serialized = deck.to_json()
+    assert '"html"' not in serialized
+    assert '"text"' in serialized
