@@ -24,7 +24,7 @@
 | 003 | Tipos del dominio y errores | 002 | P1 | Implementada 2026-10-31 |
 | 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Implementada 2026-10-31 |
 | 005 | Reglas: frescura e intervalos de descarga | 003 | P1 | Implementada 2026-10-31 |
-| 006 | Reglas: ubicación y distancia | 003 | P1 | Lista para implementar |
+| 006 | Reglas: ubicación y distancia | 003 | P1 | Implementada 2026-10-31 |
 | 007 | Validación de datos descargados (SEC-10, SEC-28, SEC-29) | 003 | P1 | Por redactar |
 | 008 | Puertos | 003 | P1 | Por redactar |
 | 009 | Configuración (`orbita.settings`, `.env.example`) y textos (`locales/es.json`) | 002 | P1 | Por redactar |
