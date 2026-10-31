@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import streamlit as st  # type: ignore[import-untyped]
+import streamlit as st
 
 from orbita.app.get_live_view import GetLiveView
 from orbita.app.live_view import LiveView
