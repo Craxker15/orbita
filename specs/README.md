@@ -22,7 +22,7 @@
 | 001 | Pre-commit, gitleaks, Streamlit y VS Code | 000 | Base | Implementada 2026-10-30 |
 | 002 | Esqueleto de capas y regla de dependencias (`test_architecture.py`) | 000 | Base | Implementada 2026-10-30 |
 | 003 | Tipos del dominio y errores | 002 | P1 | Implementada 2026-10-31 |
-| 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Lista para implementar |
+| 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Implementada 2026-10-31 |
 | 005 | Reglas: frescura e intervalos de descarga | 003 | P1 | Por redactar |
 | 006 | Reglas: ubicación y distancia | 003 | P1 | Por redactar |
 | 007 | Validación de datos descargados (SEC-10, SEC-28, SEC-29) | 003 | P1 | Por redactar |
