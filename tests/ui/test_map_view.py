@@ -90,4 +90,4 @@ def test_deck_tooltip_is_plain_text_and_no_tiles_are_requested() -> None:
     deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []})
     serialized = deck.to_json()
     assert '"html"' not in serialized
-    assert deck.tooltip == {"text": "{name}"}
+    assert deck._tooltip == {"text": "{name}"}  # pydeck keeps the tooltip in a private attribute
