@@ -5,3 +5,6 @@ gatherUsageStats = false
 address = "localhost"
 enableXsrfProtection = true
 enableCORS = true
+
+[client]
+showErrorDetails = "none"

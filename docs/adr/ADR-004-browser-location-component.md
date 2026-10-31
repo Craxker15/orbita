@@ -38,3 +38,7 @@ goes through the domain rule of `DESIGN.md` §4.5 (SEC-14) before use.
 
 `ARCHITECTURE.md` §2 (`orbita.ui`), §7.1; `security-rules.md` SEC-01, SEC-14, SEC-22, SEC-39; `docs/00-requirements.md`
 RF-10, RF-12, RF-15.
+
+## Addendum (spec 020)
+
+La ubicación continua (RF-15) se decide en ADR-007: este componente se mantiene solo para la lectura única.

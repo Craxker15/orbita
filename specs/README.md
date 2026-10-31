@@ -25,21 +25,21 @@
 | 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Implementada 2026-10-31 |
 | 005 | Reglas: frescura e intervalos de descarga | 003 | P1 | Implementada 2026-10-31 |
 | 006 | Reglas: ubicación y distancia | 003 | P1 | Implementada 2026-10-31 |
-| 007 | Validación de datos descargados (SEC-10, SEC-28, SEC-29) | 003 | P1 | Por redactar |
-| 008 | Puertos | 003 | P1 | Por redactar |
-| 009 | Configuración (`orbita.settings`, `.env.example`) y textos (`locales/es.json`) | 002 | P1 | Por redactar |
-| 010 | Lista de los 20 satélites con números NORAD confirmados | 003 | P1 | Por redactar |
-| 011 | Adaptador `CelestrakSource` y batería de entradas maliciosas | 007, 008 | P1 | Por redactar |
-| 012 | Adaptador `JsonFileStore` | 007, 008 | P1 | Por redactar |
-| 013 | Adaptadores `SkyfieldPropagator` y `SystemClock` | 008, 010 | P1 | Por redactar |
-| 014 | Casos de uso `RefreshSatelliteData` y `GetLiveView` | 004-008, 010 | P1 | Por redactar |
-| 015 | Interfaz: mapa pydeck, mapa base local y fichas | 009, 014 | P1 | Por redactar |
-| 016 | Interfaz: "Mi ubicación" | 006, 015 | P1 | Por redactar |
-| 017 | Arranque (`orbita.main`) y prueba de punta a punta | 011-016 | P1 | Por redactar |
-| 018 | Catálogo SATCAT: país, lanzamiento y años en órbita | 017 | P2 | Por redactar |
-| 019 | README, SECURITY.md y publicación en GitHub | 017 | Fase 7 | Por redactar |
-| 020 | Ubicación continua (necesita un ADR nuevo) | 019 | P3 | Por redactar |
-| 021 | Publicación con HTTPS (ADR-005) | 020 | P3 | Por redactar |
+| 007 | Validación de datos descargados (SEC-10, SEC-28, SEC-29) | 003 | P1 | Lista para implementar |
+| 008 | Puertos | 003 | P1 | Lista para implementar |
+| 009 | Configuración (`orbita.settings`, `.env.example`) y textos (`locales/es.json`) | 002 | P1 | Lista para implementar |
+| 010 | Lista de los 20 satélites con números NORAD confirmados | 003 | P1 | Bloqueada: confirmar 10 NORAD |
+| 011 | Adaptador `CelestrakSource` y batería de entradas maliciosas | 007, 008 | P1 | Lista para implementar |
+| 012 | Adaptador `JsonFileStore` | 007, 008 | P1 | Lista para implementar |
+| 013 | Adaptadores `SkyfieldPropagator` y `SystemClock` | 008, 010 | P1 | Lista para implementar |
+| 014 | Casos de uso `RefreshSatelliteData` y `GetLiveView` | 004-008, 010 | P1 | Lista para implementar |
+| 015 | Interfaz: mapa pydeck, mapa base local y fichas | 009, 014 | P1 | Lista para implementar |
+| 016 | Interfaz: "Mi ubicación" | 006, 015 | P1 | Lista para implementar |
+| 017 | Arranque (`orbita.main`) y prueba de punta a punta | 011-016 | P1 | Lista para implementar |
+| 018 | Catálogo SATCAT: país, lanzamiento y años en órbita | 017 | P2 | Lista para implementar |
+| 019 | README, SECURITY.md y publicación en GitHub | 017 | Fase 7 | Lista para implementar |
+| 020 | Ubicación continua (necesita un ADR nuevo) | 019 | P3 | Lista para implementar |
+| 021 | Publicación con HTTPS (ADR-005) | 020 | P3 | Lista para implementar |
 
 ## Correcciones
 
@@ -51,3 +51,11 @@
 | 2026-10-30 | 002 | El bloque Python dentro del `.md` quedó en el formato de ruff. | `ruff format --check` revisa también los bloques de código de los documentos (caso 4 de la spec 000). |
 | 2026-10-31 | 002 | La tabla `ALLOWED` del test permite que cada capa importe su propio paquete (por ejemplo, `orbita.domain` dentro del dominio). | Al implementar la spec 003, el test marcó `catalog.py` por importar `elements.py`: un módulo puede depender de otro de su misma capa; la regla prohíbe otras capas y terceros. |
 | 2026-10-31 | 003 | El número de tests de la spec pasa de 34 a 41: `pytest` también corre los 7 de `test_architecture.py`. | Al ejecutar el Definition of Done, `pytest` mostró 41 tests. |
+| 2026-10-31 | 003 | Se añaden seis campos a `OrbitalElements` (`raan_deg`, `arg_perigee_deg`, `mean_anomaly_deg`, `mean_motion_dot`, `mean_motion_ddot`, `bstar`) con validación. | SGP4 los necesita y el modelo de la spec 003 no los tenía; se corrige en la spec 007. |
+| 2026-10-31 | 008 | La spec toca el estado del dominio (`state.py`) y los puertos; se documenta como excepción explícita a la regla 3. | Puertos y estado se definen juntos para que la spec 013 compile. |
+| 2026-10-31 | 009 | No se añade `python-dotenv`; `.env` se lee con una función propia. | SEC-39 limita las dependencias. `ARCHITECTURE.md` §8 menciona `python-dotenv` y debe corregirse. |
+| 2026-10-31 | 010 | Spec bloqueada: no se pudo consultar CelesTrak desde el entorno de redacción; los 10 NORAD deben confirmarse en celestrak.org. | Sin confirmación, los números serían supuestos. |
+| 2026-10-31 | 014 | `LiveView` gana `age_days` para rellenar `{days}` en el aviso de datos viejos. | Sin ese dato, el texto `stale_data` no puede mostrarse. |
+| 2026-10-31 | 018 | Se añade `years_in_orbit` a `SatelliteView` y a la ficha; la spec toca tres capas (domain, app, ui) y es excepción documentada a la regla 3. | Las tres capas cambian juntas para mostrar un dato nuevo. |
+| 2026-10-31 | 020 | La ubicación continua se decide en ADR-007 (componente propio con `watchPosition`); ADR-004 recibe un addendum. | `streamlit-geolocation` solo lee una vez. |
+| 2026-10-31 | 021 | `config.toml` y la clave `location_privacy_published` quedan aplicados. Pendiente al implementar: campo `published` en `Settings`, `PageDependencies` y `main.py`, y generar `requirements.txt` con uv. | Los cambios de código de la spec 021 se describen en prosa y se aplican durante su implementación. |
