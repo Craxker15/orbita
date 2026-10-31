@@ -91,3 +91,11 @@ def test_deck_tooltip_is_plain_text_and_no_tiles_are_requested() -> None:
     serialized = deck.to_json()
     assert '"html"' not in serialized
     assert deck._tooltip == {"text": "{name}"}  # pydeck keeps the tooltip in a private attribute
+
+
+def test_load_basemap_accepts_a_byte_order_mark(tmp_path: Path) -> None:
+    """Windows editors add a BOM; the outlines must still load (found when running the app)."""
+    path = tmp_path / "countries.geojson"
+    body = json.dumps({"type": "FeatureCollection", "features": []}).encode("utf-8")
+    path.write_bytes(b"\xef\xbb\xbf" + body)
+    assert load_basemap(path)["type"] == "FeatureCollection"

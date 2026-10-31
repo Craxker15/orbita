@@ -27,7 +27,7 @@ def load_basemap(path: Path) -> dict[str, Any]:
         ConfigError: if the file cannot be read or is not a FeatureCollection.
     """
     try:
-        content = json.loads(path.read_text(encoding="utf-8"))
+        content = json.loads(path.read_text(encoding="utf-8-sig"))  # tolerates a BOM
     except (OSError, ValueError) as error:
         raise ConfigError(f"{path.name} cannot be read as JSON") from error
     if not isinstance(content, dict) or content.get("type") != "FeatureCollection":
