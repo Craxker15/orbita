@@ -15,8 +15,6 @@ from orbita.domain.observer import GroundPoint, Observer
 BASEMAP_LAYER_ID: Final = "basemap"
 OCEAN_LAYER_ID: Final = "ocean"
 EARTH_LAYER_ID: Final = "earth"
-# Served by Streamlit from the project folder static/ (server.enableStaticServing, offline).
-EARTH_TEXTURE_URL: Final = "/app/static/earth_texture.jpg"
 # One polygon covering the whole planet: the sea color under the country outlines (offline).
 OCEAN_FEATURES: Final[dict[str, Any]] = {
     "type": "FeatureCollection",
