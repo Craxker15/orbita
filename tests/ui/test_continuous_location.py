@@ -1,4 +1,4 @@
-"""Tests of the continuous-location component file (spec 020, ADR-007, SEC-04). No browser needed."""
+"""Tests of the continuous-location component file (spec 020, ADR-007, SEC-04)."""
 
 from __future__ import annotations
 
