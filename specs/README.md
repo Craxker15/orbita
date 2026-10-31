@@ -21,7 +21,7 @@
 | 000 | [Setup de Python y herramientas de calidad](000-setup-python-calidad.md) | — | Base | Implementada 2026-10-30 |
 | 001 | Pre-commit, gitleaks, Streamlit y VS Code | 000 | Base | Implementada 2026-10-30 |
 | 002 | Esqueleto de capas y regla de dependencias (`test_architecture.py`) | 000 | Base | Implementada 2026-10-30 |
-| 003 | Tipos del dominio y errores | 002 | P1 | Por redactar |
+| 003 | Tipos del dominio y errores | 002 | P1 | Lista para implementar |
 | 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Por redactar |
 | 005 | Reglas: frescura e intervalos de descarga | 003 | P1 | Por redactar |
 | 006 | Reglas: ubicación y distancia | 003 | P1 | Por redactar |
