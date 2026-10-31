@@ -99,6 +99,8 @@ def _omm_fields(elements: OrbitalElements) -> dict[str, object]:
     """Map the domain elements to the OMM field names that Skyfield's from_omm expects."""
     return {
         "OBJECT_NAME": elements.name,
+        # sgp4 reads OBJECT_ID only for the international designator, which positions do not use.
+        "OBJECT_ID": "",
         "NORAD_CAT_ID": elements.norad,
         "EPOCH": elements.epoch.replace(tzinfo=None).isoformat(timespec="microseconds"),
         "MEAN_MOTION": elements.mean_motion_rev_day,
