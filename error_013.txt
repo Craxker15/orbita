@@ -1,0 +1,108 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\Users\juanj\Documents\vscode\orbita
+configfile: pyproject.toml
+plugins: anyio-4.15.1, platformdirs-4.14.0, cov-7.1.0
+collected 6 items
+
+tests\adapters\test_skyfield_propagator.py F
+
+================================== FAILURES ===================================
+____________ test_altitude_of_a_low_orbit_is_in_the_expected_range ____________
+
+self = <orbita.adapters.skyfield_propagator.SkyfieldPropagator object at 0x0000026AA41FEE40>
+elements = OrbitalElements(norad=25544, name='SYNTHETIC LEO', inclination_deg=51.6, mean_motion_rev_day=15.5, eccentricity=0.0005...ne.utc), raan_deg=0.0, arg_perigee_deg=0.0, mean_anomaly_deg=0.0, mean_motion_dot=0.0, mean_motion_ddot=0.0, bstar=0.0)
+
+    def _satellite_for(self, elements: OrbitalElements) -> Any:
+        """Return Skyfield satellite, cached per element change (ARCHITECTURE.md º6)."""
+        with self._lock:
+            cached = self._satellites.get(elements.norad)
+            if cached is not None and cached[0] == elements:
+                return cached[1]
+            try:
+>               satellite = EarthSatellite.from_omm(self._timescale, _omm_fields(elements))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\orbita\adapters\skyfield_propagator.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = <class 'skyfield.sgp4lib.EarthSatellite'>
+ts = <skyfield.timelib.Timescale object at 0x0000026AA41FE150>
+element_dict = {'OBJECT_NAME': 'SYNTHETIC LEO', 'NORAD_CAT_ID': 25544, 'EPOCH': '2026-10-30T12:00:00.000000', 'MEAN_MOTION': 15.5, ...}
+
+    @classmethod
+    def from_omm(cls, ts, element_dict):
+        """Build an EarthSatellite from OMM text fields.
+    
+        Provide a ``ts`` timescale object, and a Python dict of OMM
+        field names and values.  The timescale is used to build the
+        satellite's ``.epoch`` time.
+    
+        """
+        self = cls.__new__(cls)
+        self.name = element_dict.get('OBJECT_NAME', None)
+        self.model = satrec = Satrec()
+>       omm.initialize(satrec, element_dict)
+
+.venv\Lib\site-packages\skyfield\sgp4lib.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+sat = <sgp4.wrapper.Satrec object at 0x0000026AA15103F0>
+fields = {'OBJECT_NAME': 'SYNTHETIC LEO', 'NORAD_CAT_ID': 25544, 'EPOCH': '2026-10-30T12:00:00.000000', 'MEAN_MOTION': 15.5, ...}
+gravconst = 1
+
+    def initialize(sat, fields, gravconst=WGS72):
+        sat.classification = fields['CLASSIFICATION_TYPE']
+>       sat.intldesg = fields['OBJECT_ID'][2:].replace('-', '')
+                       ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'OBJECT_ID'
+
+.venv\Lib\site-packages\sgp4\omm.py:31: KeyError
+
+The above exception was the direct cause of the following exception:
+
+    def test_altitude_of_a_low_orbit_is_in_the_expected_range() -> None:
+>       state = SkyfieldPropagator().state(leo(), NOW)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\adapters\test_skyfield_propagator.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <orbita.adapters.skyfield_propagator.SkyfieldPropagator object at 0x0000026AA41FEE40>
+elements = OrbitalElements(norad=25544, name='SYNTHETIC LEO', inclination_deg=51.6, mean_motion_rev_day=15.5, eccentricity=0.0005...ne.utc), raan_deg=0.0, arg_perigee_deg=0.0, mean_anomaly_deg=0.0, mean_motion_dot=0.0, mean_motion_ddot=0.0, bstar=0.0)
+moment = datetime.datetime(2026, 10, 30, 13, 0, tzinfo=datetime.timezone.utc)
+
+    def state(self, elements: OrbitalElements, moment: datetime) -> SatelliteState:
+        """Return the position and the speed of one satellite at one instant (OrbitPropagator).
+    
+        Raises:
+            PropagationError: if orbit cannot be computed (e.g., re-entry).
+        """
+>       satellite = self._satellite_for(elements)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\orbita\adapters\skyfield_propagator.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <orbita.adapters.skyfield_propagator.SkyfieldPropagator object at 0x0000026AA41FEE40>
+elements = OrbitalElements(norad=25544, name='SYNTHETIC LEO', inclination_deg=51.6, mean_motion_rev_day=15.5, eccentricity=0.0005...ne.utc), raan_deg=0.0, arg_perigee_deg=0.0, mean_anomaly_deg=0.0, mean_motion_dot=0.0, mean_motion_ddot=0.0, bstar=0.0)
+
+    def _satellite_for(self, elements: OrbitalElements) -> Any:
+        """Return Skyfield satellite, cached per element change (ARCHITECTURE.md º6)."""
+        with self._lock:
+            cached = self._satellites.get(elements.norad)
+            if cached is not None and cached[0] == elements:
+                return cached[1]
+            try:
+                satellite = EarthSatellite.from_omm(self._timescale, _omm_fields(elements))
+            except (ValueError, KeyError, TypeError) as error:
+>               raise PropagationError(
+                    f"the elements of NORAD {elements.norad} cannot be used"
+                ) from error
+E               orbita.domain.errors.PropagationError: the elements of NORAD 25544 cannot be used
+
+src\orbita\adapters\skyfield_propagator.py:91: PropagationError
+=========================== short test summary info ===========================
+FAILED tests/adapters/test_skyfield_propagator.py::test_altitude_of_a_low_orbit_is_in_the_expected_range
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+============================== 1 failed in 0.67s ==============================
