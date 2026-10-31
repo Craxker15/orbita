@@ -73,7 +73,7 @@ def main() -> None:
     texts = load_texts(TEXTS_FILE)
     try:
         render_page(_cached_dependencies(str(settings.data_dir), settings.refresh_s))
-    except Exception:  # noqa: BLE001 - last defence: logged, then shown as text (ARCHITECTURE.md §6)
+    except Exception:  # noqa: BLE001 - logged, then shown as text (ARCHITECTURE.md §6)
         logger.exception("app_failed")
         st.error(texts["unexpected_error"])
 
