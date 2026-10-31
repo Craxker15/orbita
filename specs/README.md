@@ -20,7 +20,7 @@
 |---|---|---|---|---|
 | 000 | [Setup de Python y herramientas de calidad](000-setup-python-calidad.md) | — | Base | Implementada 2026-10-30 |
 | 001 | Pre-commit, gitleaks, Streamlit y VS Code | 000 | Base | Implementada 2026-10-30 |
-| 002 | Esqueleto de capas y regla de dependencias (`test_architecture.py`) | 000 | Base | Por redactar |
+| 002 | Esqueleto de capas y regla de dependencias (`test_architecture.py`) | 000 | Base | Implementada 2026-10-30 |
 | 003 | Tipos del dominio y errores | 002 | P1 | Por redactar |
 | 004 | Reglas: tipo de órbita, periodo y tiempo | 003 | P1 | Por redactar |
 | 005 | Reglas: frescura e intervalos de descarga | 003 | P1 | Por redactar |
@@ -47,3 +47,5 @@
 |---|---|---|---|
 | 2026-10-30 | 000 | `src/orbita/__init__.py` debe terminar con un salto de línea. | `ruff check` marcó W292 en la primera comprobación. |
 | 2026-10-30 | 000 | Se llenó la tabla de versiones fijadas (13 paquetes). | Las versiones se fijan con `uv tree` al implementar, según el paso 6. |
+| 2026-10-30 | 002 | Dos líneas del test superaban 100 caracteres; se partieron y la aserción del adaptador se escribió como la pide ruff. | `ruff check` (E501) y `ruff format --check` fallaron. |
+| 2026-10-30 | 002 | El bloque Python dentro del `.md` quedó en el formato de ruff. | `ruff format --check` revisa también los bloques de código de los documentos (caso 4 de la spec 000). |
