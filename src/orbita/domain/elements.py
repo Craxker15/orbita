@@ -11,6 +11,7 @@ from orbita.domain.errors import DataValidationError
 
 MAX_NAME_LENGTH = 80
 MAX_INCLINATION_DEG = 180.0
+MAX_ANGLE_DEG = 360.0
 MAX_MEAN_MOTION_REV_DAY = 20.0
 MAX_ECCENTRICITY = 1.0
 
@@ -38,6 +39,12 @@ def require_utc(value: datetime, field: str) -> None:
         raise DataValidationError(f"{field} must be a timezone-aware UTC datetime")
 
 
+def require_finite(value: float, field: str) -> None:
+    """Raise DataValidationError unless the value is a finite number."""
+    if not math.isfinite(value):
+        raise DataValidationError(f"{field} must be a finite number")
+
+
 def require_in_range(
     value: float,
     low: float,
@@ -48,8 +55,7 @@ def require_in_range(
     high_inclusive: bool = True,
 ) -> None:
     """Raise DataValidationError unless value is a finite number inside the range."""
-    if not math.isfinite(value):
-        raise DataValidationError(f"{field} must be a finite number")
+    require_finite(value, field)
     above = value >= low if low_inclusive else value > low
     below = value <= high if high_inclusive else value < high
     if not (above and below):
@@ -58,7 +64,7 @@ def require_in_range(
 
 @dataclass(frozen=True, slots=True)
 class OrbitalElements:
-    """The orbital elements of one satellite, as published by CelesTrak (GP format)."""
+    """Orbital elements of one satellite, as CelesTrak publishes them (OMM fields for SGP4)."""
 
     norad: int
     name: str
@@ -66,6 +72,12 @@ class OrbitalElements:
     mean_motion_rev_day: float
     eccentricity: float
     epoch: datetime
+    raan_deg: float
+    arg_perigee_deg: float
+    mean_anomaly_deg: float
+    mean_motion_dot: float
+    mean_motion_ddot: float
+    bstar: float
 
     def __post_init__(self) -> None:
         """Validate every field with the ranges of SEC-10."""
@@ -86,6 +98,16 @@ class OrbitalElements:
         require_in_range(
             self.eccentricity, 0.0, MAX_ECCENTRICITY, "eccentricity", high_inclusive=False
         )
+        require_in_range(self.raan_deg, 0.0, MAX_ANGLE_DEG, "raan_deg", high_inclusive=False)
+        require_in_range(
+            self.arg_perigee_deg, 0.0, MAX_ANGLE_DEG, "arg_perigee_deg", high_inclusive=False
+        )
+        require_in_range(
+            self.mean_anomaly_deg, 0.0, MAX_ANGLE_DEG, "mean_anomaly_deg", high_inclusive=False
+        )
+        require_finite(self.mean_motion_dot, "mean_motion_dot")
+        require_finite(self.mean_motion_ddot, "mean_motion_ddot")
+        require_finite(self.bstar, "bstar")
         require_utc(self.epoch, "epoch")
 
 

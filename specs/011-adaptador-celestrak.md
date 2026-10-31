@@ -209,7 +209,9 @@ def test_connection_error_raises_download_error() -> None:
 
 
 def test_body_larger_than_5_mb_is_rejected() -> None:
-    source, _ = make_source(lambda request: httpx.Response(200, content=b"x" * (MAX_DOWNLOAD_BYTES + 1)))
+    source, _ = make_source(
+        lambda request: httpx.Response(200, content=b"x" * (MAX_DOWNLOAD_BYTES + 1))
+    )
     with pytest.raises(DownloadError):
         source.download_elements(25544)
 
@@ -347,7 +349,6 @@ def test_mean_motion_change_of_6_percent_is_rejected_against_the_saved_value() -
     saved = parse_elements_payload([record()], ALLOWED, NOW).accepted[0]
     changed = parse_elements_payload([record(MEAN_MOTION=15.5 * 1.06)], ALLOWED, NOW).accepted[0]
     assert not mean_motion_change_is_plausible(saved, changed)
-
 ```
 
 ## Pasos

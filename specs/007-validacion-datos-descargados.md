@@ -177,9 +177,7 @@ class OrbitalElements:
         require_in_range(
             self.eccentricity, 0.0, MAX_ECCENTRICITY, "eccentricity", high_inclusive=False
         )
-        require_in_range(
-            self.raan_deg, 0.0, MAX_ANGLE_DEG, "raan_deg", high_inclusive=False
-        )
+        require_in_range(self.raan_deg, 0.0, MAX_ANGLE_DEG, "raan_deg", high_inclusive=False)
         require_in_range(
             self.arg_perigee_deg, 0.0, MAX_ANGLE_DEG, "arg_perigee_deg", high_inclusive=False
         )
@@ -335,9 +333,7 @@ def parse_catalog_payload(
     return ParsedRecords(tuple(accepted), tuple(rejected))
 
 
-def mean_motion_change_is_plausible(
-    previous: OrbitalElements | None, new: OrbitalElements
-) -> bool:
+def mean_motion_change_is_plausible(previous: OrbitalElements | None, new: OrbitalElements) -> bool:
     """Return False when the mean motion changed by more than 5 % since the saved value (SEC-29).
 
     Preconditions: previous, when present, has a mean motion greater than zero (SEC-10).
@@ -581,7 +577,10 @@ def test_record_missing_a_field_is_rejected() -> None:
 
 def test_epoch_up_to_one_day_in_the_future_is_accepted() -> None:
     near_future = (NOW + timedelta(hours=23)).replace(tzinfo=None).isoformat()
-    assert len(parse_elements_payload([elements_record(EPOCH=near_future)], ALLOWED, NOW).accepted) == 1
+    assert (
+        len(parse_elements_payload([elements_record(EPOCH=near_future)], ALLOWED, NOW).accepted)
+        == 1
+    )
 
 
 def test_good_records_are_kept_when_another_record_is_bad() -> None:
