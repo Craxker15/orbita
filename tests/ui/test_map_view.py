@@ -13,10 +13,14 @@ from orbita.domain.errors import ConfigError
 from orbita.domain.observer import GroundPoint, Observer
 from orbita.ui.map_view import (
     EARTH_LAYER_ID,
+    MOON_LAYER_ID,
+    NIGHT_LAYER_ID,
     OBSERVER_LAYER_ID,
     OCEAN_LAYER_ID,
     SATELLITE_LAYER_ID,
+    SUN_LAYER_ID,
     TRACK_LAYER_ID,
+    SkyLayers,
     build_deck,
     load_basemap,
     satellite_rows,
@@ -137,4 +141,14 @@ def test_the_earth_photo_is_embedded_in_the_map() -> None:
     photo = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpeg")
     deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []}, photo)
     assert "data:image/jpeg;base64," in deck.to_json()  # .jpeg gives the standard MIME type
+
+
+def test_deck_adds_night_sun_and_moon_when_the_sky_is_given() -> None:
+    empty = {"type": "FeatureCollection", "features": []}
+    sky = SkyLayers(sun=(0.0, 0.0), moon=(10.0, 20.0), night_image="night.png")
+    deck = build_deck(view(), None, empty, None, sky)
+    ids = [layer.id for layer in deck.layers]
+    assert NIGHT_LAYER_ID in ids
+    assert SUN_LAYER_ID in ids
+    assert MOON_LAYER_ID in ids
 

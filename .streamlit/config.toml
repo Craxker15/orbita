@@ -8,3 +8,6 @@ enableCORS = true
 
 [client]
 showErrorDetails = "none"
+
+[theme]
+base = "dark"

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
@@ -15,6 +16,11 @@ from orbita.domain.observer import GroundPoint, Observer
 BASEMAP_LAYER_ID: Final = "basemap"
 OCEAN_LAYER_ID: Final = "ocean"
 EARTH_LAYER_ID: Final = "earth"
+NIGHT_LAYER_ID: Final = "night"
+SUN_LAYER_ID: Final = "sun"
+MOON_LAYER_ID: Final = "moon"
+SUN_RADIUS_M: Final = 120_000
+MOON_RADIUS_M: Final = 90_000
 # One polygon covering the whole planet: the sea color under the country outlines (offline).
 OCEAN_FEATURES: Final[dict[str, Any]] = {
     "type": "FeatureCollection",
@@ -93,11 +99,64 @@ def _background_layers(earth_image: str | None) -> list[Any]:
     ]
 
 
+@dataclass(frozen=True, slots=True)
+class SkyLayers:
+    """Where the Sun and the Moon are overhead (latitude, longitude) and the night mask file."""
+
+    sun: tuple[float, float]
+    moon: tuple[float, float]
+    night_image: str | None = None
+
+
+def _night_layers(sky: SkyLayers | None) -> list[Any]:
+    """The dark night side, drawn over the Earth photo when a mask file is available."""
+    if sky is None or sky.night_image is None:
+        return []
+    return [
+        pydeck.Layer(
+            "BitmapLayer",
+            id=NIGHT_LAYER_ID,
+            image=sky.night_image,
+            bounds=[-180, -90, 180, 90],
+            pickable=False,
+        )
+    ]
+
+
+def _sky_marker_layers(sky: SkyLayers | None) -> list[Any]:
+    """Markers where the Sun and the Moon are overhead, named in the tooltip."""
+    if sky is None:
+        return []
+    return [
+        pydeck.Layer(
+            "ScatterplotLayer",
+            id=SUN_LAYER_ID,
+            data=[{"name": "Sol", "position": [sky.sun[1], sky.sun[0]]}],
+            get_position="position",
+            get_fill_color=[255, 214, 90],
+            get_radius=SUN_RADIUS_M,
+            radius_min_pixels=9,
+            pickable=True,
+        ),
+        pydeck.Layer(
+            "ScatterplotLayer",
+            id=MOON_LAYER_ID,
+            data=[{"name": "Luna", "position": [sky.moon[1], sky.moon[0]]}],
+            get_position="position",
+            get_fill_color=[220, 220, 225],
+            get_radius=MOON_RADIUS_M,
+            radius_min_pixels=7,
+            pickable=True,
+        ),
+    ]
+
+
 def build_deck(
     view: LiveView,
     observer: Observer | None,
     basemap: dict[str, Any],
     earth_image: str | None = None,
+    sky: SkyLayers | None = None,
 ) -> pydeck.Deck:
     """Build the 3D globe: offline outlines, the ISS track, the satellites and the user marker.
 
@@ -107,6 +166,7 @@ def build_deck(
     land_fill = earth_image is None
     layers: list[Any] = [
         *_background_layers(earth_image),
+        *_night_layers(sky),
         pydeck.Layer(
             "GeoJsonLayer",
             id=BASEMAP_LAYER_ID,
@@ -139,6 +199,7 @@ def build_deck(
             pickable=True,
             auto_highlight=True,
         ),
+        *_sky_marker_layers(sky),
     ]
     if observer is not None:
         layers.append(

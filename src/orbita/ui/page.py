@@ -5,8 +5,9 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import streamlit as st
 
@@ -14,11 +15,27 @@ from orbita.app.get_live_view import GetLiveView
 from orbita.app.live_view import LiveView
 from orbita.app.refresh_satellite_data import RefreshSatelliteData
 from orbita.domain.observer import Observer
+from orbita.domain.sky import moon_subpoint, sun_subpoint
 from orbita.ui.cards import card_rows, freshness_notice
 from orbita.ui.location import OBSERVER_KEY, location_section
-from orbita.ui.map_view import SATELLITE_LAYER_ID, build_deck, load_basemap
+from orbita.ui.map_view import SATELLITE_LAYER_ID, SkyLayers, build_deck, load_basemap
+from orbita.ui.night_mask import write_night_mask
 
 logger = logging.getLogger(__name__)
+
+STARFIELD_STYLE: Final = """<style>
+.stApp {
+  background-color: #03040a;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #ffffff, transparent),
+    radial-gradient(1px 1px at 90px 140px, #d8e4ff, transparent),
+    radial-gradient(1.5px 1.5px at 160px 70px, #ffffff, transparent),
+    radial-gradient(1px 1px at 230px 200px, #fff3d6, transparent),
+    radial-gradient(1px 1px at 300px 120px, #ffffff, transparent);
+  background-size: 320px 260px;
+}
+header[data-testid="stHeader"] { background: transparent; }
+</style>"""
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,11 +48,13 @@ class PageDependencies:
     basemap_path: Path
     refresh_seconds: int
     earth_texture_path: Path
+    data_dir: Path
 
 
 def render_page(deps: PageDependencies) -> None:
     """Draw the title, the approximation notice, run the refresh once and start the live map."""
     st.set_page_config(page_title=deps.texts["title"], layout="wide")
+    st.markdown(STARFIELD_STYLE, unsafe_allow_html=True)
     st.title(deps.texts["title"])
     st.caption(deps.texts["approximate_notice"])
     deps.refresh.execute()
@@ -73,14 +92,29 @@ def _draw(deps: PageDependencies, view: LiveView, observer: Observer | None) -> 
     if view.downloaded_text is not None:
         st.caption(f"{deps.texts['label_last_download']}: {view.downloaded_text}")
     basemap = load_basemap(deps.basemap_path)
+    sky = _sky_layers(deps)
     state: Any = st.pydeck_chart(
-        build_deck(view, observer, basemap, str(deps.earth_texture_path)),
+        build_deck(view, observer, basemap, str(deps.earth_texture_path), sky),
         on_select="rerun",
         selection_mode="single-object",
         key="satellite_map",
         height=520,
     )
     _show_card(deps, view, _selected_norad(state))
+
+
+def _sky_layers(deps: PageDependencies) -> SkyLayers:
+    """Where the Sun and the Moon are overhead now, and the night mask (offline formulas)."""
+    now = datetime.now(UTC)
+    sun = sun_subpoint(now)
+    mask_path = deps.data_dir / "night_mask.png"
+    night_image: str | None = None
+    try:
+        write_night_mask(mask_path, sun)
+        night_image = str(mask_path)
+    except OSError:
+        logger.warning("night_mask_not_written")
+    return SkyLayers(sun=sun, moon=moon_subpoint(now), night_image=night_image)
 
 
 def _selected_norad(state: Any) -> int | None:

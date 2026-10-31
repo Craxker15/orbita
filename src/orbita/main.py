@@ -53,6 +53,7 @@ def build_dependencies(
         texts=load_texts(TEXTS_FILE),
         basemap_path=BASEMAP_FILE,
         earth_texture_path=EARTH_FILE,
+        data_dir=data_dir,
         refresh_seconds=refresh_seconds,
     )
 
