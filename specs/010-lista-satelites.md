@@ -67,7 +67,7 @@ Ninguna.
 
 Este bloque NO se extrae automáticamente: tiene diez números sin confirmar. Se completa a mano en el paso 2.
 
-```text
+```python
 """The 20 satellites of Orbita (DESIGN.md §3.1). Numbers are fixed by spec 010."""
 
 from __future__ import annotations
@@ -93,23 +93,23 @@ SATELLITES: tuple[SatelliteSpec, ...] = (
     SatelliteSpec(25544, "ISS (ZARYA)"),
     SatelliteSpec(48274, "Tiangong (Tianhe)"),
     SatelliteSpec(20580, "Hubble"),
-    SatelliteSpec(0, "AstroSat"),  # PENDIENTE: confirmar el NORAD en CelesTrak
-    SatelliteSpec(0, "STARLINK-PENDIENTE"),  # PENDIENTE: nombre exacto y NORAD
-    SatelliteSpec(0, "FACSAT-2"),  # PENDIENTE: confirmar que sigue en órbita
+    SatelliteSpec(40930, "AstroSat"),
+    SatelliteSpec(33591, "NOAA 19"),
+    SatelliteSpec(56205, "FACSAT-2"),
     SatelliteSpec(43013, "NOAA 20"),
     SatelliteSpec(25994, "Terra"),
     SatelliteSpec(49260, "Landsat 9"),
     SatelliteSpec(39634, "Sentinel-1A"),
     SatelliteSpec(40697, "Sentinel-2A"),
     SatelliteSpec(27386, "Envisat"),
-    SatelliteSpec(0, "FENGYUN 3D"),  # PENDIENTE
-    SatelliteSpec(0, "METEOR-M 2"),  # PENDIENTE
-    SatelliteSpec(0, "CARTOSAT-3"),  # PENDIENTE
+    SatelliteSpec(43010, "FENGYUN 3D"),
+    SatelliteSpec(40069, "METEOR-M 2"),
+    SatelliteSpec(44804, "CARTOSAT-3"),
     SatelliteSpec(60133, "GOES 19"),
-    SatelliteSpec(0, "HIMAWARI-9"),  # PENDIENTE
-    SatelliteSpec(0, "METEOSAT-11"),  # PENDIENTE
-    SatelliteSpec(0, "GPS III"),  # PENDIENTE
-    SatelliteSpec(0, "GALILEO"),  # PENDIENTE
+    SatelliteSpec(41836, "HIMAWARI-9"),
+    SatelliteSpec(40732, "METEOSAT-11"),
+    SatelliteSpec(43873, "GPS III SV01"),
+    SatelliteSpec(40128, "GALILEO 5"),
 )
 
 SATELLITE_NORADS: frozenset[int] = frozenset(satellite.norad for satellite in SATELLITES)
