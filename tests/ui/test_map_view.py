@@ -93,6 +93,13 @@ def test_deck_tooltip_is_plain_text_and_no_tiles_are_requested() -> None:
     assert deck._tooltip == {"text": "{name}"}  # pydeck keeps the tooltip in a private attribute
 
 
+def test_deck_is_a_3d_globe() -> None:
+    """The map is a 3D globe (DESIGN.md §5), drawn without any tile server."""
+    deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []})
+    assert deck.views[0].type == "_GlobeView"
+    assert deck.map_provider is None
+
+
 def test_load_basemap_accepts_a_byte_order_mark(tmp_path: Path) -> None:
     """Windows editors add a BOM; the outlines must still load (found when running the app)."""
     path = tmp_path / "countries.geojson"

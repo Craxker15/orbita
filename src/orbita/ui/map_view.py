@@ -53,7 +53,7 @@ def track_path(track: tuple[GroundPoint, ...]) -> list[list[float]]:
 
 
 def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any]) -> pydeck.Deck:
-    """Build the map: offline outlines, the ISS track, the satellites and the user marker.
+    """Build the 3D globe: offline outlines, the ISS track, the satellites and the user marker.
 
     Postconditions: no tile server is used (map_provider=None, ADR-002).
     The tooltip is plain text (SEC-13).
@@ -106,6 +106,7 @@ def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any
         )
     return pydeck.Deck(
         layers=layers,
+        views=[pydeck.View(type="_GlobeView", controller=True)],
         initial_view_state=pydeck.ViewState(latitude=0.0, longitude=0.0, zoom=1),
         map_provider=None,
         tooltip={"text": "{name}"},
