@@ -1,49 +1,59 @@
 # Órbita
 
-Mapa web que muestra en tiempo real dónde están 20 satélites, incluida la Estación Espacial Internacional, tu ubicación
-(si la permites) y la distancia aproximada a cada uno.
+A web map that shows, in real time, where 20 satellites are, including the International Space Station, your location
+(if you allow it), and the approximate distance to each one.
 
-> **Prototipo académico.** Las posiciones y las distancias son aproximadas (un error típico de unos kilómetros en la
-> posición y de decenas de kilómetros en la distancia). No las uses para operaciones espaciales.
+> **Academic prototype.** Positions and distances are approximate (typically a few kilometers of position error and tens
+> of kilometers of distance error). Do not use them for space operations.
 
-## Qué hace
+Spanish version: [README.es.md](README.es.md).
 
-- Muestra la posición de 20 satélites de varios países, actualizada cada segundo.
-- Dibuja la trayectoria de la ISS desde 45 minutos antes hasta 45 minutos después.
-- Con el botón "Mi ubicación" (y tu permiso), muestra tu punto y la distancia a cada satélite. Tu ubicación solo se
-  usa mientras la página está abierta y nunca se guarda.
-- Funciona sin internet con los últimos datos guardados, y avisa si los datos tienen más de 3 días.
+## What it does
 
-## Cómo se calcula
+- Shows the position of 20 satellites from several countries, updated every second (configurable, see below).
+- Draws the ISS trajectory from 45 minutes before to 45 minutes after the current time.
+- With the "My location" button (and your permission), shows your point and the distance to each satellite. Your location
+  is used only while the page is open and is never stored.
+- Works offline with the last saved data, and warns when the data is more than 3 days old.
 
-Las posiciones se calculan en tu equipo con SGP4 (librería Skyfield) a partir de los elementos orbitales públicos de
-CelesTrak. No se usan imágenes de satélite. Los detalles están en `DESIGN.md` y en `ARCHITECTURE.md`.
+## How it is calculated
 
-## Instalación y uso (Windows, PowerShell)
+Positions are computed on your computer with SGP4 (Skyfield library) from public orbital elements published by CelesTrak.
+No satellite images are used. Details are in `DESIGN.md` and `ARCHITECTURE.md`.
 
-Requisitos: Python 3.12 gestionado con [uv](https://docs.astral.sh/uv/).
+## Installation and use (Windows, PowerShell)
+
+Requirements: Python 3.12, managed with [uv](https://docs.astral.sh/uv/).
 
 ```powershell
 uv sync --locked
-Copy-Item .env.example .env
 uv run streamlit run src\orbita\main.py
 ```
 
-Se abre `http://localhost:8501`. La carpeta `data\` se crea sola al descargar los datos.
+Open `http://localhost:8501`. The `data\` folder is created automatically when the data is downloaded.
 
-## Calidad y seguridad
+### Optional configuration
 
-- Pruebas: `uv run pytest -v`. Calidad: `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`.
-- Hooks de pre-commit (incluido un escáner de secretos): `uv run pre-commit run --all-files`.
-- Reglas de seguridad y de privacidad: `security-rules.md`. Cómo reportar una vulnerabilidad: `SECURITY.md`.
+No configuration is required. To change a default, create a file named `.env` in the project root with any of these
+lines (default value in parentheses):
 
-## Documentación
+- `ORBITA_DATA_DIR=data`: folder where downloaded data is saved.
+- `ORBITA_REFRESH_S=1`: seconds between updates, from 1 to 10.
+- `ORBITA_LOG_LEVEL=INFO`: log level: `DEBUG`, `INFO`, `WARNING` or `ERROR`.
 
-- Diseño: `DESIGN.md` · Requisitos: `docs/00-requirements.md` · Arquitectura: `ARCHITECTURE.md`
-- Decisiones: `docs/adr/` · Especificaciones de construcción: `specs/`
+## Quality and security
 
-Los documentos en español (`*.es.md`) son copias de estudio; la versión oficial está en inglés.
+- Tests: `uv run pytest -v`. Quality checks: `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`.
+- Pre-commit hooks (including a secret scanner): `uv run pre-commit run --all-files`.
+- Security and privacy rules: `security-rules.md`. How to report a vulnerability: `SECURITY.md`.
 
-## Licencia
+## Documentation
 
-Por definir antes de la publicación.
+- Design: `DESIGN.md` · Requirements: `docs/00-requirements.md` · Architecture: `ARCHITECTURE.md`
+- Decisions: `docs/adr/` · Build specifications: `specs/`
+
+Documents in Spanish (`*.es.md`) are study copies; the official version is in English.
+
+## License
+
+Not defined yet. Until a license is added, the code has no explicit permission for reuse.
