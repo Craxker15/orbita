@@ -61,19 +61,19 @@ el paso 6 con las que resuelve `uv` y se anotan en esta tabla al implementar:
 
 | Paquete | Versión fijada |
 |---|---|
-| `uv_build` (igual a la versión de `uv`) | |
-| `streamlit` | |
-| `pydeck` | |
-| `skyfield` | |
-| `httpx` | |
-| `python-dotenv` | |
-| `streamlit-geolocation` | |
-| `pytest` | |
-| `pytest-cov` | |
-| `ruff` | |
-| `mypy` | |
-| `pre-commit` | |
-| `pip-audit` | |
+| `uv_build` (igual a la versión de `uv`) | 0.12.13 |
+| `streamlit` | 1.66.1 |
+| `pydeck` | 0.9.3 |
+| `skyfield` | 1.55 |
+| `httpx` | 0.28.1 |
+| `python-dotenv` | 1.2.4 |
+| `streamlit-geolocation` | 0.0.10 |
+| `pytest` | 9.2.0 |
+| `pytest-cov` | 7.1.0 |
+| `ruff` | 0.17.3 |
+| `mypy` | 2.4.1 |
+| `pre-commit` | 4.7.0 |
+| `pip-audit` | 2.10.1 |
 
 ## Contenido exacto de los archivos
 
@@ -108,6 +108,9 @@ cambios reales.
 
 from __future__ import annotations
 ```
+
+El archivo debe terminar con un salto de línea después de la última línea. Si `ruff` marca `W292`, ejecutar
+`uv run ruff format src\orbita\__init__.py`.
 
 ### `pyproject.toml`
 
@@ -247,6 +250,7 @@ Qué hace cada bloque de `[tool.ruff.lint]`:
 5. `uv run pytest` sin tests termina con código 5 ("no tests ran"): en esta spec es el resultado esperado.
 6. git avisa "LF will be replaced by CRLF" o al revés: es el efecto de `.gitattributes`; no es un error.
 7. PowerShell no reconoce `uv` justo después de instalarlo: cerrar y abrir VS Code.
+8. `ruff` marca `W292` (falta salto de línea final) en `src/orbita/__init__.py`: ejecutar `uv run ruff format src\orbita\__init__.py`.
 
 ## Tests de aceptación
 
