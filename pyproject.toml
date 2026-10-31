@@ -1,0 +1,61 @@
+[build-system]
+requires = ["uv_build==0.12.13"]
+build-backend = "uv_build"
+
+[project]
+name = "orbita"
+version = "0.1.0"
+description = "Real-time map of 20 satellites with approximate distances to the user"
+requires-python = "==3.12.*"
+dependencies = [
+    "streamlit==1.66.1",
+    "pydeck==0.9.3",
+    "skyfield==1.55",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.4",
+    "streamlit-geolocation==0.0.10",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.2.0",
+    "pytest-cov==7.1.0",
+    "ruff==0.17.3",
+    "mypy==2.4.1",
+    "pre-commit==4.7.0",
+    "pip-audit==2.10.1",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "C90", "D", "PLR", "S", "T20", "BLE"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR2004", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+[tool.ruff.lint.pylint]
+max-statements = 20
+max-args = 6
+max-positional-args = 6
+max-branches = 8
+
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
