@@ -17,6 +17,7 @@ from orbita.app.refresh_satellite_data import RefreshSatelliteData
 from orbita.domain.observer import Observer
 from orbita.domain.sky import moon_subpoint, sun_subpoint
 from orbita.ui.cards import card_rows, freshness_notice
+from orbita.ui.continuous_location import continuous_location_section
 from orbita.ui.location import OBSERVER_KEY, location_section
 from orbita.ui.map_view import SATELLITE_LAYER_ID, SkyLayers, build_deck, load_basemap
 from orbita.ui.night_mask import write_night_mask
@@ -59,6 +60,7 @@ def render_page(deps: PageDependencies) -> None:
     st.caption(deps.texts["approximate_notice"])
     deps.refresh.execute()
     location_section(deps.texts)
+    continuous_location_section(deps.texts)
     _make_live_fragment(deps)()
 
 

@@ -6,10 +6,14 @@
 </head>
 <body>
 <script>
-  // Streamlit component protocol, no libraries, no network requests (ADR-007, SEC-04).
-  // mode "once": one reading with getCurrentPosition. The error is not sent: the page shows location_unavailable.
+  // Streamlit component protocol. No libraries, no network requests, no eval (ADR-007, SEC-04).
+  // mode "once": one reading with getCurrentPosition. Errors are not sent: the page shows location_unavailable.
+  // mode "watch": readings with watchPosition while args.active is true; clearWatch when it is false or the
+  // page closes. Only the reading is sent to the parent page; nothing is stored here.
   (function () {
+    var OPTIONS = { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 };
     var requested = false;
+    var watchId = null;
 
     function send(type, data) {
       window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, data), "*");
@@ -28,20 +32,45 @@
 
     function onError() {}
 
+    function startOnce() {
+      if (requested || !navigator.geolocation) {
+        return;
+      }
+      requested = true;
+      navigator.geolocation.getCurrentPosition(onReading, onError, OPTIONS);
+    }
+
+    function startWatch() {
+      if (watchId !== null || !navigator.geolocation) {
+        return;
+      }
+      watchId = navigator.geolocation.watchPosition(onReading, onError, OPTIONS);
+    }
+
+    function stopWatch() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+    }
+
     window.addEventListener("message", function (event) {
       if (!event.data || event.data.type !== "streamlit:render") {
         return;
       }
       var args = event.data.args || {};
-      if (args.mode === "once" && !requested && navigator.geolocation) {
-        requested = true;
-        navigator.geolocation.getCurrentPosition(onReading, onError, {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 5000
-        });
+      if (args.mode === "watch") {
+        if (args.active === false) {
+          stopWatch();
+        } else {
+          startWatch();
+        }
+      } else if (args.mode === "once") {
+        startOnce();
       }
     });
+
+    window.addEventListener("pagehide", stopWatch);
 
     send("streamlit:componentReady", { apiVersion: 1 });
     send("streamlit:setFrameHeight", { height: 0 });
