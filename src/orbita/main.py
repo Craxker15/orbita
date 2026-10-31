@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Final
 
 import httpx
-import streamlit as st  # type: ignore[import-untyped]
+import streamlit as st
 
 from orbita.adapters.celestrak_source import CelestrakSource
 from orbita.adapters.json_file_store import JsonFileStore
