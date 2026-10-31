@@ -151,4 +151,3 @@ def test_deck_adds_night_sun_and_moon_when_the_sky_is_given() -> None:
     assert NIGHT_LAYER_ID in ids
     assert SUN_LAYER_ID in ids
     assert MOON_LAYER_ID in ids
-

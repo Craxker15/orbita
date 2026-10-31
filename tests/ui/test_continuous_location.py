@@ -6,7 +6,12 @@ from pathlib import Path
 
 HTML = (
     Path(__file__).resolve().parents[2]
-    / "src" / "orbita" / "ui" / "static" / "geowatch" / "index.html"
+    / "src"
+    / "orbita"
+    / "ui"
+    / "static"
+    / "geowatch"
+    / "index.html"
 ).read_text(encoding="utf-8")
 
 FORBIDDEN = ["fetch(", "XMLHttpRequest", "WebSocket", "sendBeacon", "eval(", "http://", "https://"]
