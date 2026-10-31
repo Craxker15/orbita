@@ -112,3 +112,10 @@ def test_load_basemap_accepts_a_byte_order_mark(tmp_path: Path) -> None:
     body = json.dumps({"type": "FeatureCollection", "features": []}).encode("utf-8")
     path.write_bytes(b"\xef\xbb\xbf" + body)
     assert load_basemap(path)["type"] == "FeatureCollection"
+
+
+def test_the_bundled_countries_file_has_the_country_outlines() -> None:
+    """The offline outlines must contain real countries (the file was empty once, unnoticed)."""
+    path = Path(__file__).resolve().parents[2] / "assets" / "ne_110m_countries.geojson"
+    features = load_basemap(path)["features"]
+    assert len(features) >= 170
