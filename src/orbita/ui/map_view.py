@@ -55,7 +55,8 @@ def track_path(track: tuple[GroundPoint, ...]) -> list[list[float]]:
 def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any]) -> pydeck.Deck:
     """Build the map: offline outlines, the ISS track, the satellites and the user marker.
 
-    Postconditions: no tile server is used (map_provider=None, ADR-002); tooltip is plain text (SEC-13).
+    Postconditions: no tile server is used (map_provider=None, ADR-002).
+    The tooltip is plain text (SEC-13).
     """
     layers: list[Any] = [
         pydeck.Layer(
