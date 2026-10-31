@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import functools
 import json
 from pathlib import Path
 from typing import Any, Final
@@ -14,6 +16,7 @@ from orbita.domain.observer import GroundPoint, Observer
 
 BASEMAP_LAYER_ID: Final = "basemap"
 OCEAN_LAYER_ID: Final = "ocean"
+EARTH_LAYER_ID: Final = "earth"
 # One polygon covering the whole planet: the sea color under the country outlines (offline).
 OCEAN_FEATURES: Final[dict[str, Any]] = {
     "type": "FeatureCollection",
@@ -67,13 +70,33 @@ def track_path(track: tuple[GroundPoint, ...]) -> list[list[float]]:
     return [[point.longitude, point.latitude] for point in track]
 
 
-def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any]) -> pydeck.Deck:
-    """Build the 3D globe: offline outlines, the ISS track, the satellites and the user marker.
+@functools.lru_cache(maxsize=1)
+def load_earth_texture(path: Path) -> str:
+    """Read the Earth photo and return it as a data URI, so the page needs no network (ADR-002).
 
-    Postconditions: no tile server is used (map_provider=None, ADR-002).
-    The tooltip is plain text (SEC-13).
+    Raises:
+        ConfigError: if the file cannot be read.
     """
-    layers: list[Any] = [
+    try:
+        data = path.read_bytes()
+    except OSError as error:
+        raise ConfigError(f"{path.name} cannot be read") from error
+    return "data:image/jpeg;base64," + base64.b64encode(data).decode("ascii")
+
+
+def _background_layers(earth_image: str | None) -> list[Any]:
+    """The surface under the outlines: the Earth photo when available, otherwise plain sea."""
+    if earth_image is not None:
+        return [
+            pydeck.Layer(
+                "BitmapLayer",
+                id=EARTH_LAYER_ID,
+                image=earth_image,
+                bounds=[-180, -90, 180, 90],
+                pickable=False,
+            )
+        ]
+    return [
         pydeck.Layer(
             "GeoJsonLayer",
             id=OCEAN_LAYER_ID,
@@ -82,15 +105,32 @@ def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any
             filled=True,
             get_fill_color=[18, 58, 104],
             pickable=False,
-        ),
+        )
+    ]
+
+
+def build_deck(
+    view: LiveView,
+    observer: Observer | None,
+    basemap: dict[str, Any],
+    earth_image: str | None = None,
+) -> pydeck.Deck:
+    """Build the 3D globe: offline outlines, the ISS track, the satellites and the user marker.
+
+    Postconditions: no tile server is used (map_provider=None, ADR-002).
+    The tooltip is plain text (SEC-13).
+    """
+    land_fill = earth_image is None
+    layers: list[Any] = [
+        *_background_layers(earth_image),
         pydeck.Layer(
             "GeoJsonLayer",
             id=BASEMAP_LAYER_ID,
             data=basemap,
             stroked=True,
-            filled=True,
+            filled=land_fill,
             get_fill_color=[78, 124, 74],
-            get_line_color=[150, 190, 140],
+            get_line_color=[150, 190, 140] if land_fill else [255, 255, 255, 110],
             get_line_width=1,
             line_width_min_pixels=1,
             pickable=False,
