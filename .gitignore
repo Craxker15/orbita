@@ -8,3 +8,5 @@ __pycache__/
 data/
 *.log
 .streamlit/secrets.toml
+# diagnosticos locales
+error_*.txt
