@@ -28,7 +28,7 @@
 | 007 | Validación de datos descargados (SEC-10, SEC-28, SEC-29) | 003 | P1 | Lista para implementar |
 | 008 | Puertos | 003 | P1 | Lista para implementar |
 | 009 | Configuración (`orbita.settings`, `.env.example`) y textos (`locales/es.json`) | 002 | P1 | Lista para implementar |
-| 010 | Lista de los 20 satélites con números NORAD confirmados | 003 | P1 | Bloqueada: confirmar 10 NORAD |
+| 010 | Lista de los 20 satélites con números NORAD confirmados | 003 | P1 | Lista para implementar |
 | 011 | Adaptador `CelestrakSource` y batería de entradas maliciosas | 007, 008 | P1 | Lista para implementar |
 | 012 | Adaptador `JsonFileStore` | 007, 008 | P1 | Lista para implementar |
 | 013 | Adaptadores `SkyfieldPropagator` y `SystemClock` | 008, 010 | P1 | Lista para implementar |
@@ -59,3 +59,4 @@
 | 2026-10-31 | 018 | Se añade `years_in_orbit` a `SatelliteView` y a la ficha; la spec toca tres capas (domain, app, ui) y es excepción documentada a la regla 3. | Las tres capas cambian juntas para mostrar un dato nuevo. |
 | 2026-10-31 | 020 | La ubicación continua se decide en ADR-007 (componente propio con `watchPosition`); ADR-004 recibe un addendum. | `streamlit-geolocation` solo lee una vez. |
 | 2026-10-31 | 021 | `config.toml` y la clave `location_privacy_published` quedan aplicados. Pendiente al implementar: campo `published` en `Settings`, `PageDependencies` y `main.py`, y generar `requirements.txt` con uv. | Los cambios de código de la spec 021 se describen en prosa y se aplican durante su implementación. |
+| 2026-10-31 | 010 | Los 10 NORAD confirmados en SATCAT: AstroSat 40930, FACSAT-2 56205, FENGYUN 3D 43010, METEOR-M 2 40069, CARTOSAT-3 44804, HIMAWARI-9 41836, METEOSAT-11 40732, GPS III SV01 43873, GALILEO 5 40128. Starlink se sustituye por NOAA 19 (33591). | Los Starlink se reentran con frecuencia (p. ej. STARLINK-1130 en 2025); se eligió un satélite estable. |
