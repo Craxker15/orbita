@@ -136,5 +136,5 @@ def test_the_earth_photo_is_embedded_in_the_map() -> None:
     """pydeck embeds a local image as a data URI; a web path fails (found in the app)."""
     photo = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpg")
     deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []}, photo)
-    assert "data:image/jpeg;base64," in deck.to_json()
+    assert "data:image/jpg;base64," in deck.to_json()  # pydeck uses the file extension
 
