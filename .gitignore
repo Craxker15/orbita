@@ -10,3 +10,4 @@ data/
 .streamlit/secrets.toml
 # diagnosticos locales
 error_*.txt
+data_e2e_test/
