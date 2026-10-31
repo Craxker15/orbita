@@ -39,7 +39,7 @@ Ninguna. Solo se usan `dataclasses`, `datetime`, `enum`, `math`, `re` y `datetim
 ### `src/orbita/domain/errors.py`
 
 ```python
-"""Project exceptions. Every error raised by Orbita inherits from OrbitaError (ARCHITECTURE.md §6)."""
+"""Project exceptions. Every Orbita error inherits from OrbitaError (ARCHITECTURE.md §6)."""
 
 from __future__ import annotations
 
@@ -205,7 +205,7 @@ class GroundPoint:
 
 @dataclass(frozen=True, slots=True, repr=False)
 class Observer:
-    """The user's location read from the browser. It lives only in memory (SEC-03, DESIGN.md §4.5)."""
+    """The user's location from the browser. It lives only in memory (SEC-03, DESIGN.md §4.5)."""
 
     latitude: float
     longitude: float
@@ -238,6 +238,7 @@ from orbita.domain.elements import require_utc
 from orbita.domain.errors import DataValidationError
 
 OWNER_CODE_PATTERN = re.compile(r"[A-Z0-9]{1,10}")
+OWNER_CODE_MESSAGE = "owner_code must be 1 to 10 capital letters or digits"
 
 
 @dataclass(frozen=True, slots=True)
@@ -252,8 +253,10 @@ class CatalogEntry:
         """Validate the NORAD number, the owner code and the launch date."""
         if isinstance(self.norad, bool) or not isinstance(self.norad, int) or self.norad <= 0:
             raise DataValidationError("norad must be a positive integer")
-        if not isinstance(self.owner_code, str) or OWNER_CODE_PATTERN.fullmatch(self.owner_code) is None:
-            raise DataValidationError("owner_code must be 1 to 10 capital letters or digits")
+        if not isinstance(self.owner_code, str):
+            raise DataValidationError(OWNER_CODE_MESSAGE)
+        if OWNER_CODE_PATTERN.fullmatch(self.owner_code) is None:
+            raise DataValidationError(OWNER_CODE_MESSAGE)
         if isinstance(self.launch_date, datetime) or not isinstance(self.launch_date, date):
             raise DataValidationError("launch_date must be a date without time")
 
@@ -353,7 +356,10 @@ def test_dataset_rejects_naive_download_time() -> None:
         OrbitalDataset(downloaded_at=datetime(2026, 10, 30), elements=())
 
 
-@pytest.mark.parametrize(("latitude", "longitude"), [(3.45, -76.53), (90.0, 180.0), (-90.0, -180.0)])
+@pytest.mark.parametrize(
+    ("latitude", "longitude"),
+    [(3.45, -76.53), (90.0, 180.0), (-90.0, -180.0)],
+)
 def test_observer_accepts_valid_location(latitude: float, longitude: float) -> None:
     assert Observer(latitude=latitude, longitude=longitude).latitude == latitude
 
@@ -424,7 +430,7 @@ def test_enum_values_match_the_names_of_the_rules() -> None:
    ```powershell
    uv run pytest -v
    ```
-   Deben pasar todos los tests, con `34 passed`.
+   Deben pasar todos los tests, con `41 passed` (34 de `test_types.py` y 7 de `test_architecture.py`).
 5. **Revisar calidad:**
    ```powershell
    uv run ruff check .
@@ -459,7 +465,7 @@ def test_enum_values_match_the_names_of_the_rules() -> None:
 
 ## Tests de aceptación
 
-Son los 34 tests de `tests/domain/test_types.py`. Cubren: rangos de cada campo de `OrbitalElements`, fechas con zona
+Son los 34 tests de `tests/domain/test_types.py`, más los 7 de `tests/test_architecture.py`. Cubren: rangos de cada campo de `OrbitalElements`, fechas con zona
 horaria, duplicados en `OrbitalDataset` y `Catalog`, ubicaciones de RF-10 (`(3.45, −76.53)` válida; `(90.0, 180.0)`
 válida; `(90.1, 0.0)` y `(0.0, −180.1)` inválidas), `Observer` oculto en el `repr`, el mensaje de error sin
 coordenadas, el código de dueño de SATCAT, la jerarquía de errores y los valores de los enumerados.
@@ -476,7 +482,7 @@ coordenadas, el código de dueño de SATCAT, la jerarquía de errores y los valo
 
 Todos los comandos en PowerShell, desde la carpeta `orbita`.
 
-- [ ] `uv run pytest -v` → `34 passed` y `echo $LASTEXITCODE` → `0`.
+- [ ] `uv run pytest -v` → `41 passed` y `echo $LASTEXITCODE` → `0`.
 - [ ] `Select-String -Path src\orbita\domain\*.py -Pattern 'import (streamlit|httpx|pydeck|skyfield)'` → sin salida
   (el dominio no importa terceros).
 - [ ] `uv run ruff check .` → `All checks passed!`
