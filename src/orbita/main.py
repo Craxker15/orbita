@@ -29,7 +29,6 @@ REPO_ROOT: Final = Path(__file__).resolve().parents[2]
 ENV_FILE: Final = REPO_ROOT / ".env"
 TEXTS_FILE: Final = REPO_ROOT / "locales" / "es.json"
 BASEMAP_FILE: Final = REPO_ROOT / "assets" / "ne_110m_countries.geojson"
-EARTH_FILE: Final = REPO_ROOT / "assets" / "earth_texture.jpg"
 LOG_FORMAT: Final = "%(asctime)s %(levelname)s %(name)s %(message)s"
 
 logger = logging.getLogger(__name__)
@@ -52,7 +51,6 @@ def build_dependencies(
         live=GetLiveView(store, SkyfieldPropagator(), clock, SATELLITE_NORADS),
         texts=load_texts(TEXTS_FILE),
         basemap_path=BASEMAP_FILE,
-        earth_texture_path=EARTH_FILE,
         refresh_seconds=refresh_seconds,
     )
 

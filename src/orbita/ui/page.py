@@ -16,7 +16,7 @@ from orbita.app.refresh_satellite_data import RefreshSatelliteData
 from orbita.domain.observer import Observer
 from orbita.ui.cards import card_rows, freshness_notice
 from orbita.ui.location import OBSERVER_KEY, location_section
-from orbita.ui.map_view import SATELLITE_LAYER_ID, build_deck, load_basemap, load_earth_texture
+from orbita.ui.map_view import EARTH_TEXTURE_URL, SATELLITE_LAYER_ID, build_deck, load_basemap
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,6 @@ class PageDependencies:
     texts: dict[str, str]
     basemap_path: Path
     refresh_seconds: int
-    earth_texture_path: Path
 
 
 def render_page(deps: PageDependencies) -> None:
@@ -73,9 +72,8 @@ def _draw(deps: PageDependencies, view: LiveView, observer: Observer | None) -> 
     if view.downloaded_text is not None:
         st.caption(f"{deps.texts['label_last_download']}: {view.downloaded_text}")
     basemap = load_basemap(deps.basemap_path)
-    earth = load_earth_texture(deps.earth_texture_path)
     state: Any = st.pydeck_chart(
-        build_deck(view, observer, basemap, earth),
+        build_deck(view, observer, basemap, EARTH_TEXTURE_URL),
         on_select="rerun",
         selection_mode="single-object",
         key="satellite_map",

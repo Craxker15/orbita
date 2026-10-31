@@ -19,7 +19,7 @@ from orbita.ui.map_view import (
     TRACK_LAYER_ID,
     build_deck,
     load_basemap,
-    load_earth_texture,
+    EARTH_TEXTURE_URL,
     satellite_rows,
     track_path,
 )
@@ -125,13 +125,13 @@ def test_the_bundled_countries_file_has_the_country_outlines() -> None:
 
 def test_deck_draws_the_earth_photo_under_everything_when_given() -> None:
     empty = {"type": "FeatureCollection", "features": []}
-    deck = build_deck(view(), None, empty, "data:image/jpeg;base64,AA==")
+    deck = build_deck(view(), None, empty, EARTH_TEXTURE_URL)
     assert deck.layers[0].id == EARTH_LAYER_ID
     assert OCEAN_LAYER_ID not in [layer.id for layer in deck.layers]
 
 
-def test_earth_texture_is_read_as_a_jpeg_data_uri(tmp_path: Path) -> None:
-    path = tmp_path / "earth_texture.jpg"
-    path.write_bytes(b"\xff\xd8\xff\xe0 test")
-    assert load_earth_texture(path).startswith("data:image/jpeg;base64,")
+def test_earth_texture_is_served_from_the_static_folder() -> None:
+    """The photo lives in static/ so Streamlit serves it offline at EARTH_TEXTURE_URL."""
+    assert EARTH_TEXTURE_URL == "/app/static/earth_texture.jpg"
+    assert (Path(__file__).resolve().parents[2] / "static" / "earth_texture.jpg").is_file()
 

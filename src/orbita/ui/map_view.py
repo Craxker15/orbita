@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import base64
-import functools
 import json
 from pathlib import Path
 from typing import Any, Final
@@ -17,6 +15,8 @@ from orbita.domain.observer import GroundPoint, Observer
 BASEMAP_LAYER_ID: Final = "basemap"
 OCEAN_LAYER_ID: Final = "ocean"
 EARTH_LAYER_ID: Final = "earth"
+# Served by Streamlit from the project folder static/ (server.enableStaticServing, offline).
+EARTH_TEXTURE_URL: Final = "/app/static/earth_texture.jpg"
 # One polygon covering the whole planet: the sea color under the country outlines (offline).
 OCEAN_FEATURES: Final[dict[str, Any]] = {
     "type": "FeatureCollection",
@@ -68,20 +68,6 @@ def satellite_rows(view: LiveView) -> list[dict[str, Any]]:
 def track_path(track: tuple[GroundPoint, ...]) -> list[list[float]]:
     """The ISS ground track as [longitude, latitude] pairs."""
     return [[point.longitude, point.latitude] for point in track]
-
-
-@functools.lru_cache(maxsize=1)
-def load_earth_texture(path: Path) -> str:
-    """Read the Earth photo and return it as a data URI, so the page needs no network (ADR-002).
-
-    Raises:
-        ConfigError: if the file cannot be read.
-    """
-    try:
-        data = path.read_bytes()
-    except OSError as error:
-        raise ConfigError(f"{path.name} cannot be read") from error
-    return "data:image/jpeg;base64," + base64.b64encode(data).decode("ascii")
 
 
 def _background_layers(earth_image: str | None) -> list[Any]:
