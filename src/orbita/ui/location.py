@@ -1,4 +1,4 @@
-"""'My location' button: one browser reading, kept only in memory (ADR-007, RF-10, SEC-01 to SEC-03, SEC-14)."""
+"""'My location' button: one browser reading, kept only in memory (ADR-007, RF-10, SEC-14)."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ _geolocate: Any = components.declare_component("orbita_geolocate", path=str(STAT
 
 
 def _finite_number(value: object) -> float | None:
-    """Return the value as a float if it is a finite number that is not a boolean, else None (SEC-14)."""
+    """Return the value as a finite float, or None for booleans, text and NaN/Infinity (SEC-14)."""
     if isinstance(value, bool) or not isinstance(value, int | float):
         return None
     number = float(value)
@@ -53,7 +53,7 @@ def accuracy_from_reading(reading: Mapping[str, Any] | None) -> float | None:
 
 
 def location_section(texts: Mapping[str, str]) -> None:
-    """Draw the privacy text, the button and the accuracy; the observer is kept in memory only (SEC-02)."""
+    """Draw the privacy text, the button and the accuracy; the observer stays in memory (SEC-02)."""
     st.caption(texts["location_privacy"])
     if st.button(texts["my_location"]):
         st.session_state[REQUESTED_KEY] = True
