@@ -63,3 +63,4 @@
 | 2026-10-31 | 013 | `_omm_fields` incluye `OBJECT_ID` (cadena vacía). | La librería `sgp4` lee `OBJECT_ID` para el designador internacional y falla con `KeyError` si falta; la posición no lo usa. Hallazgo de `pytest` en Windows. |
 | 2026-10-31 | 014 | Los archivos de `app` incluyen el campo `years_in_orbit` de la spec 018 (parche aplicado al implementar la 014). | El código ya venía con ese parche desde la rama WIP; se documenta para que la 018 no se repita. |
 | 2026-10-31 | 015 | `src/orbita/ui/page.py` no entra en esta spec: importa `location.py` (spec 016). Se implementa con la 016. | Evitar traer código de la 016 a la 015; la spec 015 cubre mapa y fichas. |
+| 2026-10-31 | 015 | El test del tooltip comprueba `deck.tooltip` y no el JSON de `to_json()`, que no incluye el tooltip en pydeck. | Hallazgo de `pytest` en Windows; el tooltip sí es texto plano (SEC-13). |
