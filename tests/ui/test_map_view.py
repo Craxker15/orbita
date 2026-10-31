@@ -33,6 +33,7 @@ def satellite(norad: int = 25544) -> SatelliteView:
         distance_km=None,
         owner_code=None,
         launch_date=None,
+        years_in_orbit=None,
     )
 
 

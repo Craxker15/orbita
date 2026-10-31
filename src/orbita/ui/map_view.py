@@ -21,7 +21,7 @@ OBSERVER_RADIUS_M: Final = 80_000
 
 
 def load_basemap(path: Path) -> dict[str, Any]:
-    """Read the offline country outlines, which must be a GeoJSON FeatureCollection (ADR-002, SEC-09).
+    """Read the offline country outlines: a GeoJSON FeatureCollection (ADR-002, SEC-09).
 
     Raises:
         ConfigError: if the file cannot be read or is not a FeatureCollection.
@@ -36,7 +36,7 @@ def load_basemap(path: Path) -> dict[str, Any]:
 
 
 def satellite_rows(view: LiveView) -> list[dict[str, Any]]:
-    """One row per satellite, with the position in [longitude, latitude] order as pydeck expects it."""
+    """One row per satellite, with the position as [longitude, latitude] (pydeck order)."""
     return [
         {
             "norad": item.norad,
@@ -53,9 +53,9 @@ def track_path(track: tuple[GroundPoint, ...]) -> list[list[float]]:
 
 
 def build_deck(view: LiveView, observer: Observer | None, basemap: dict[str, Any]) -> pydeck.Deck:
-    """Build the map: offline outlines, the ISS track, the satellites and, when known, the user's marker.
+    """Build the map: offline outlines, the ISS track, the satellites and the user marker.
 
-    Postconditions: no tile server is used (map_provider=None, ADR-002); the tooltip is plain text (SEC-13).
+    Postconditions: no tile server is used (map_provider=None, ADR-002); tooltip is plain text (SEC-13).
     """
     layers: list[Any] = [
         pydeck.Layer(

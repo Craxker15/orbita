@@ -42,6 +42,7 @@ def satellite(distance: int | None = None, owner: str | None = None) -> Satellit
         distance_km=distance,
         owner_code=owner,
         launch_date=date(1998, 11, 20) if owner else None,
+        years_in_orbit=None,
     )
 
 
