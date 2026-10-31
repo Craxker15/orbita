@@ -57,7 +57,7 @@ def build_dependencies(
 
 @st.cache_resource
 def _cached_dependencies(data_dir: str, refresh_seconds: int) -> PageDependencies:
-    """Build the object graph once per process; Streamlit reruns this script on every interaction."""
+    """Build the object graph once per process; Streamlit reruns the script on each interaction."""
     return build_dependencies(Path(data_dir), refresh_seconds)
 
 
@@ -73,7 +73,7 @@ def main() -> None:
     texts = load_texts(TEXTS_FILE)
     try:
         render_page(_cached_dependencies(str(settings.data_dir), settings.refresh_s))
-    except Exception:  # noqa: BLE001 - last line of defence of the process; logged, then shown as text (ARCHITECTURE.md §6)
+    except Exception:  # noqa: BLE001 - last defence: logged, then shown as text (ARCHITECTURE.md §6)
         logger.exception("app_failed")
         st.error(texts["unexpected_error"])
 
