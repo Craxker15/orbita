@@ -18,7 +18,7 @@
 
 | # | Spec | Depende de | Prioridad | Estado |
 |---|---|---|---|---|
-| 000 | [Setup de Python y herramientas de calidad](000-setup-python-calidad.md) | — | Base | Lista para implementar |
+| 000 | [Setup de Python y herramientas de calidad](000-setup-python-calidad.md) | — | Base | Implementada 2026-10-30 |
 | 001 | Pre-commit, gitleaks, Streamlit y VS Code | 000 | Base | Por redactar |
 | 002 | Esqueleto de capas y regla de dependencias (`test_architecture.py`) | 000 | Base | Por redactar |
 | 003 | Tipos del dominio y errores | 002 | P1 | Por redactar |
@@ -45,3 +45,5 @@
 
 | Fecha | Spec | Cambio | Motivo |
 |---|---|---|---|
+| 2026-10-30 | 000 | `src/orbita/__init__.py` debe terminar con un salto de línea. | `ruff check` marcó W292 en la primera comprobación. |
+| 2026-10-30 | 000 | Se llenó la tabla de versiones fijadas (13 paquetes). | Las versiones se fijan con `uv tree` al implementar, según el paso 6. |
