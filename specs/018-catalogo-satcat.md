@@ -130,7 +130,12 @@ la línea `years_in_orbit: float | None`.
 
 **`src/orbita/ui/cards.py`:** en `card_rows`, la última fila pasa de `(texts["label_years_in_orbit"], missing)` a:
 ```python
-        (texts["label_years_in_orbit"], missing if view.years_in_orbit is None else f"{view.years_in_orbit:.1f}"),
+(
+    (
+        texts["label_years_in_orbit"],
+        missing if view.years_in_orbit is None else f"{view.years_in_orbit:.1f}",
+    ),
+)
 ```
 
 ## Pasos

@@ -29,6 +29,12 @@ def make_elements(**changes: object) -> OrbitalElements:
         "mean_motion_rev_day": 15.5,
         "eccentricity": 0.0007,
         "epoch": EPOCH,
+        "raan_deg": 247.0,
+        "arg_perigee_deg": 130.0,
+        "mean_anomaly_deg": 325.0,
+        "mean_motion_dot": 0.0001,
+        "mean_motion_ddot": 0.0,
+        "bstar": 0.0001,
     }
     values.update(changes)
     return OrbitalElements(**values)

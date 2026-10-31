@@ -543,13 +543,19 @@ class FakePropagator:
     def state(self, elements: OrbitalElements, moment: datetime) -> SatelliteState:
         if elements.norad in self.failing:
             raise PropagationError("orbit cannot be computed")
-        return SatelliteState(norad=elements.norad, point=GroundPoint(0.0, 0.0, 400.0), speed_km_s=7.66)
+        return SatelliteState(
+            norad=elements.norad, point=GroundPoint(0.0, 0.0, 400.0), speed_km_s=7.66
+        )
 
-    def ground_track(self, elements: OrbitalElements, moments: tuple[datetime, ...]) -> tuple[GroundPoint, ...]:
+    def ground_track(
+        self, elements: OrbitalElements, moments: tuple[datetime, ...]
+    ) -> tuple[GroundPoint, ...]:
         return tuple(GroundPoint(0.0, 0.0) for _ in moments)
 
 
-def make_element(norad: int = 25544, mean_motion: float = 15.5, downloaded: datetime = NOW) -> OrbitalElements:
+def make_element(
+    norad: int = 25544, mean_motion: float = 15.5, downloaded: datetime = NOW
+) -> OrbitalElements:
     return OrbitalElements(
         norad=norad,
         name=f"SAT {norad}",
@@ -641,16 +647,25 @@ def test_failed_download_is_not_retried() -> None:
 
 
 def test_invalid_payload_keeps_the_previous_dataset() -> None:
-    previous = OrbitalDataset(downloaded_at=NOW - timedelta(days=1), elements=(make_element(25544),))
+    previous = OrbitalDataset(
+        downloaded_at=NOW - timedelta(days=1), elements=(make_element(25544),)
+    )
     store = FakeStore(dataset=previous, attempts=DownloadAttempts(catalog=NOW))
     refresh(FakeSource(elements={25544: "[NaN]", 20580: DownloadError("x")}), store)
     assert store.dataset is previous
 
 
 def test_mean_motion_change_over_5_percent_is_rejected() -> None:
-    previous = OrbitalDataset(downloaded_at=NOW - timedelta(days=1), elements=(make_element(25544),))
+    previous = OrbitalDataset(
+        downloaded_at=NOW - timedelta(days=1), elements=(make_element(25544),)
+    )
     store = FakeStore(dataset=previous, attempts=DownloadAttempts(catalog=NOW))
-    refresh(FakeSource(elements={25544: element_text(25544, mean_motion=16.43), 20580: DownloadError("x")}), store)
+    refresh(
+        FakeSource(
+            elements={25544: element_text(25544, mean_motion=16.43), 20580: DownloadError("x")}
+        ),
+        store,
+    )
     assert store.dataset is previous
 
 
@@ -668,7 +683,9 @@ def test_satellite_missing_from_the_new_download_keeps_its_old_value() -> None:
 
 def test_catalog_is_due_after_24_hours_only() -> None:
     source = FakeSource(catalog={25544: catalog_text(25544), 20580: catalog_text(20580)})
-    too_early = FakeStore(attempts=DownloadAttempts(elements=NOW, catalog=NOW - timedelta(hours=23, minutes=59)))
+    too_early = FakeStore(
+        attempts=DownloadAttempts(elements=NOW, catalog=NOW - timedelta(hours=23, minutes=59))
+    )
     refresh(source, too_early)
     assert all(call[0] != "catalog" for call in source.calls)
     on_time = FakeStore(attempts=DownloadAttempts(elements=NOW, catalog=NOW - timedelta(hours=24)))
@@ -686,7 +703,9 @@ def test_run_while_another_is_in_progress_is_skipped() -> None:
     assert report.elements_attempted is False and report.catalog_attempted is False
 
 
-def live(store: FakeStore, observer: Observer | None = None, failing: frozenset[int] = frozenset()) -> Any:
+def live(
+    store: FakeStore, observer: Observer | None = None, failing: frozenset[int] = frozenset()
+) -> Any:
     return GetLiveView(store, FakePropagator(failing), FakeClock(NOW), SATS).execute(observer)
 
 
@@ -698,7 +717,11 @@ def test_no_data_gives_an_empty_view_with_every_satellite_missing() -> None:
 
 
 def test_data_older_than_14_days_hides_positions() -> None:
-    store = FakeStore(dataset=OrbitalDataset(downloaded_at=NOW - timedelta(days=15), elements=(make_element(25544),)))
+    store = FakeStore(
+        dataset=OrbitalDataset(
+            downloaded_at=NOW - timedelta(days=15), elements=(make_element(25544),)
+        )
+    )
     view = live(store)
     assert view.freshness is Freshness.TOO_OLD
     assert view.satellites == ()
@@ -706,7 +729,10 @@ def test_data_older_than_14_days_hides_positions() -> None:
 
 def test_data_older_than_3_days_is_stale_but_shows_positions() -> None:
     store = FakeStore(
-        dataset=OrbitalDataset(downloaded_at=NOW - timedelta(days=4), elements=(make_element(25544), make_element(20580)))
+        dataset=OrbitalDataset(
+            downloaded_at=NOW - timedelta(days=4),
+            elements=(make_element(25544), make_element(20580)),
+        )
     )
     view = live(store)
     assert view.freshness is Freshness.STALE
@@ -730,7 +756,11 @@ def test_satellite_without_data_is_listed_as_missing() -> None:
 
 
 def test_propagation_error_marks_the_satellite_as_missing() -> None:
-    store = FakeStore(dataset=OrbitalDataset(downloaded_at=NOW, elements=(make_element(25544), make_element(20580))))
+    store = FakeStore(
+        dataset=OrbitalDataset(
+            downloaded_at=NOW, elements=(make_element(25544), make_element(20580))
+        )
+    )
     view = live(store, failing=frozenset({20580}))
     assert [item.norad for item in view.satellites] == [25544]
     assert view.missing_norad == (20580,)
@@ -746,7 +776,11 @@ def test_catalog_fields_are_attached_to_the_satellite() -> None:
         dataset=OrbitalDataset(downloaded_at=NOW, elements=(make_element(25544),)),
         catalog=Catalog(
             downloaded_at=NOW,
-            entries=(CatalogEntry(norad=25544, owner_code="US", launch_date=datetime(2016, 10, 30).date()),),
+            entries=(
+                CatalogEntry(
+                    norad=25544, owner_code="US", launch_date=datetime(2016, 10, 30).date()
+                ),
+            ),
         ),
     )
     assert live(store).satellites[0].owner_code == "US"
@@ -754,7 +788,11 @@ def test_catalog_fields_are_attached_to_the_satellite() -> None:
 
 @pytest.mark.parametrize("hours", [0, 1])
 def test_fresh_data_shows_downloaded_text_in_colombia_time(hours: int) -> None:
-    store = FakeStore(dataset=OrbitalDataset(downloaded_at=NOW - timedelta(hours=hours), elements=(make_element(25544),)))
+    store = FakeStore(
+        dataset=OrbitalDataset(
+            downloaded_at=NOW - timedelta(hours=hours), elements=(make_element(25544),)
+        )
+    )
     assert live(store).downloaded_text is not None
 ```
 

@@ -159,7 +159,11 @@ def load_texts(path: Path) -> dict[str, str]:
     for key in REQUIRED_TEXT_KEYS:
         if not isinstance(content.get(key), str):
             raise ConfigError(f"{path}: key {key} is missing or is not text")
-    return {key: value for key, value in content.items() if isinstance(key, str) and isinstance(value, str)}
+    return {
+        key: value
+        for key, value in content.items()
+        if isinstance(key, str) and isinstance(value, str)
+    }
 
 
 def _data_dir(value: str, repo_root: Path) -> Path:

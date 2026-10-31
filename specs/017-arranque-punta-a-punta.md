@@ -187,7 +187,10 @@ def element(norad: int, downloaded: datetime) -> OrbitalElements:
 
 def save(folder: Path, downloaded: datetime) -> None:
     JsonFileStore(folder).save_elements(
-        OrbitalDataset(downloaded_at=downloaded, elements=(element(25544, downloaded), element(20580, downloaded)))
+        OrbitalDataset(
+            downloaded_at=downloaded,
+            elements=(element(25544, downloaded), element(20580, downloaded)),
+        )
     )
 
 

@@ -181,7 +181,11 @@ ORBIT_TEXT_KEYS: Final[Mapping[OrbitType, str]] = {
 def card_rows(view: SatelliteView, texts: Mapping[str, str]) -> tuple[tuple[str, str], ...]:
     """Return the label and the value of each line of the card of one satellite (RF-03)."""
     missing = texts["missing_value"]
-    distance = missing if view.distance_km is None else texts["distance_approx"].format(km=view.distance_km)
+    distance = (
+        missing
+        if view.distance_km is None
+        else texts["distance_approx"].format(km=view.distance_km)
+    )
     launch = missing if view.launch_date is None else view.launch_date.isoformat()
     return (
         (texts["label_altitude"], f"{view.point.altitude_km:.0f} km"),
@@ -412,7 +416,11 @@ def test_deck_has_three_layers_without_an_observer() -> None:
 
 
 def test_deck_adds_the_observer_layer_when_the_location_is_known() -> None:
-    deck = build_deck(view(), Observer(latitude=3.45, longitude=-76.53), {"type": "FeatureCollection", "features": []})
+    deck = build_deck(
+        view(),
+        Observer(latitude=3.45, longitude=-76.53),
+        {"type": "FeatureCollection", "features": []},
+    )
     assert OBSERVER_LAYER_ID in [layer.id for layer in deck.layers]
 
 

@@ -84,7 +84,12 @@ from typing import Any, Final
 import streamlit as st  # type: ignore[import-untyped]
 import streamlit.components.v1 as components  # type: ignore[import-untyped]
 
-from orbita.ui.location import ACCURACY_KEY, OBSERVER_KEY, accuracy_from_reading, observer_from_reading
+from orbita.ui.location import (
+    ACCURACY_KEY,
+    OBSERVER_KEY,
+    accuracy_from_reading,
+    observer_from_reading,
+)
 
 STATIC_DIR: Final = Path(__file__).resolve().parent / "static" / "geowatch"
 SWITCH_KEY: Final = "continuous_location_switch"
@@ -181,7 +186,15 @@ from pathlib import Path
 from orbita.ui.continuous_location import STATIC_DIR
 
 INDEX = STATIC_DIR / "index.html"
-FORBIDDEN_IN_COMPONENT = ("fetch(", "XMLHttpRequest", "WebSocket", "sendBeacon", "eval(", "http://", "https://")
+FORBIDDEN_IN_COMPONENT = (
+    "fetch(",
+    "XMLHttpRequest",
+    "WebSocket",
+    "sendBeacon",
+    "eval(",
+    "http://",
+    "https://",
+)
 
 
 def read_index() -> str:

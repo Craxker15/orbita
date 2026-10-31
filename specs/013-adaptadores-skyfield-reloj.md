@@ -90,7 +90,9 @@ class SkyfieldPropagator:
             )
             velocity = [float(component) for component in geocentric.velocity.km_per_s]
         except (ValueError, ArithmeticError, DataValidationError) as error:
-            raise PropagationError(f"the orbit of NORAD {elements.norad} cannot be computed") from error
+            raise PropagationError(
+                f"the orbit of NORAD {elements.norad} cannot be computed"
+            ) from error
         speed = math.sqrt(sum(component * component for component in velocity))
         return SatelliteState(norad=elements.norad, point=point, speed_km_s=speed)
 

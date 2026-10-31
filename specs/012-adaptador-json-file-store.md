@@ -417,7 +417,11 @@ def test_only_the_fixed_file_names_are_written(tmp_path: Path) -> None:
     store.save_elements(OrbitalDataset(downloaded_at=NOW, elements=()))
     store.save_catalog(Catalog(downloaded_at=NOW, entries=()))
     store.save_attempts(DownloadAttempts(elements=NOW))
-    assert {path.name for path in tmp_path.iterdir()} == {ELEMENTS_FILE, CATALOG_FILE, ATTEMPTS_FILE}
+    assert {path.name for path in tmp_path.iterdir()} == {
+        ELEMENTS_FILE,
+        CATALOG_FILE,
+        ATTEMPTS_FILE,
+    }
 ```
 
 ## Pasos

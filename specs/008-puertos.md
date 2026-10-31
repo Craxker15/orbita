@@ -299,7 +299,9 @@ class FakePropagator:
     def state(self, elements: object, moment: datetime) -> SatelliteState:
         return SatelliteState(norad=25544, point=GroundPoint(0.0, 0.0, 400.0), speed_km_s=7.66)
 
-    def ground_track(self, elements: object, moments: tuple[datetime, ...]) -> tuple[GroundPoint, ...]:
+    def ground_track(
+        self, elements: object, moments: tuple[datetime, ...]
+    ) -> tuple[GroundPoint, ...]:
         return ()
 
 

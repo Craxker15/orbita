@@ -150,7 +150,9 @@ def test_accuracy_is_kept_when_finite_and_not_negative() -> None:
     assert accuracy_from_reading({"accuracy": 12.5}) == 12.5
 
 
-@pytest.mark.parametrize("reading", [None, {}, {"accuracy": -1.0}, {"accuracy": math.nan}, {"accuracy": "10"}])
+@pytest.mark.parametrize(
+    "reading", [None, {}, {"accuracy": -1.0}, {"accuracy": math.nan}, {"accuracy": "10"}]
+)
 def test_invalid_accuracy_is_ignored(reading: dict[str, object] | None) -> None:
     assert accuracy_from_reading(reading) is None
 
