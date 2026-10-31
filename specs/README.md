@@ -49,3 +49,5 @@
 | 2026-10-30 | 000 | Se llenó la tabla de versiones fijadas (13 paquetes). | Las versiones se fijan con `uv tree` al implementar, según el paso 6. |
 | 2026-10-30 | 002 | Dos líneas del test superaban 100 caracteres; se partieron y la aserción del adaptador se escribió como la pide ruff. | `ruff check` (E501) y `ruff format --check` fallaron. |
 | 2026-10-30 | 002 | El bloque Python dentro del `.md` quedó en el formato de ruff. | `ruff format --check` revisa también los bloques de código de los documentos (caso 4 de la spec 000). |
+| 2026-10-31 | 002 | La tabla `ALLOWED` del test permite que cada capa importe su propio paquete (por ejemplo, `orbita.domain` dentro del dominio). | Al implementar la spec 003, el test marcó `catalog.py` por importar `elements.py`: un módulo puede depender de otro de su misma capa; la regla prohíbe otras capas y terceros. |
+| 2026-10-31 | 003 | El número de tests de la spec pasa de 34 a 41: `pytest` también corre los 7 de `test_architecture.py`. | Al ejecutar el Definition of Done, `pytest` mostró 41 tests. |

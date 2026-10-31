@@ -14,11 +14,11 @@ THIRD_PARTY = "<third-party>"
 # Allowed imports per layer. Standard library is always allowed. Entry modules (orbita.main and
 # orbita.settings) are not listed: no layer in this table may import them.
 ALLOWED: dict[str, frozenset[str]] = {
-    "domain": frozenset(),
-    "ports": frozenset({"orbita.domain"}),
-    "app": frozenset({"orbita.domain", "orbita.ports"}),
-    "adapters": frozenset({"orbita.domain", "orbita.ports", THIRD_PARTY}),
-    "ui": frozenset({"orbita.domain", "orbita.app", THIRD_PARTY}),
+    "domain": frozenset({"orbita.domain"}),
+    "ports": frozenset({"orbita.domain", "orbita.ports"}),
+    "app": frozenset({"orbita.domain", "orbita.ports", "orbita.app"}),
+    "adapters": frozenset({"orbita.domain", "orbita.ports", "orbita.adapters", THIRD_PARTY}),
+    "ui": frozenset({"orbita.domain", "orbita.app", "orbita.ui", THIRD_PARTY}),
 }
 
 
