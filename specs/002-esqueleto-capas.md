@@ -136,7 +136,9 @@ def violations(path: Path, source: str) -> list[str]:
     layer = module.split(".")[1] if "." in module else ""
     if layer not in ALLOWED:
         return []
-    return [name for name in imported_names(source, package) if not is_allowed(name, ALLOWED[layer])]
+    return [
+        name for name in imported_names(source, package) if not is_allowed(name, ALLOWED[layer])
+    ]
 
 
 def test_real_source_respects_layer_rules() -> None:
@@ -154,7 +156,9 @@ def test_detects_third_party_import_in_domain() -> None:
 
 def test_detects_adapter_import_in_app() -> None:
     source = "from orbita.adapters.celestrak import CelestrakSource\n"
-    assert violations(SRC / PACKAGE / "app" / "use_case.py", source) == ["orbita.adapters.celestrak"]
+    assert violations(SRC / PACKAGE / "app" / "use_case.py", source) == [
+        "orbita.adapters.celestrak"
+    ]
 
 
 def test_detects_relative_import_of_adapters_in_app() -> None:
