@@ -1,4 +1,4 @@
-"""Tests of the validation of the browser location reading (spec 016). No browser and no Streamlit session needed."""
+"""Tests of the browser location reading validation (spec 016). No browser or Streamlit needed."""
 
 from __future__ import annotations
 
