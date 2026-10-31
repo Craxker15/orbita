@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Órbita: ubicación</title>
+</head>
+<body>
+<script>
+  // Streamlit component protocol, no libraries, no network requests (ADR-007, SEC-04).
+  // mode "once": one reading with getCurrentPosition. The error is not sent: the page shows location_unavailable.
+  (function () {
+    var requested = false;
+
+    function send(type, data) {
+      window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, data), "*");
+    }
+
+    function onReading(position) {
+      send("streamlit:setComponentValue", {
+        value: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        },
+        dataType: "json"
+      });
+    }
+
+    function onError() {}
+
+    window.addEventListener("message", function (event) {
+      if (!event.data || event.data.type !== "streamlit:render") {
+        return;
+      }
+      var args = event.data.args || {};
+      if (args.mode === "once" && !requested && navigator.geolocation) {
+        requested = true;
+        navigator.geolocation.getCurrentPosition(onReading, onError, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 5000
+        });
+      }
+    });
+
+    send("streamlit:componentReady", { apiVersion: 1 });
+    send("streamlit:setFrameHeight", { height: 0 });
+  })();
+</script>
+</body>
+</html>

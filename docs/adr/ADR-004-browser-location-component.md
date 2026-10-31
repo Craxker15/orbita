@@ -1,6 +1,6 @@
 # ADR-004 - Browser location component: streamlit-geolocation (P1)
 
-- Status: Accepted for P1 (2026-10-30). The continuous location of P3 needs a new ADR.
+- Status: Superseded by ADR-007 (2026-10-31). streamlit-geolocation was not used: its last release is 0.0.10 (2023-11-18), so the one-time location uses the minimal own component of ADR-007.
 
 ## Context
 

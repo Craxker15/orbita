@@ -64,3 +64,4 @@
 | 2026-10-31 | 014 | Los archivos de `app` incluyen el campo `years_in_orbit` de la spec 018 (parche aplicado al implementar la 014). | El código ya venía con ese parche desde la rama WIP; se documenta para que la 018 no se repita. |
 | 2026-10-31 | 015 | `src/orbita/ui/page.py` no entra en esta spec: importa `location.py` (spec 016). Se implementa con la 016. | Evitar traer código de la 016 a la 015; la spec 015 cubre mapa y fichas. |
 | 2026-10-31 | 015 | El test del tooltip comprueba `deck.tooltip` y no el JSON de `to_json()`, que no incluye el tooltip en pydeck. | Hallazgo de `pytest` en Windows; el tooltip sí es texto plano (SEC-13). |
+| 2026-10-31 | 016 | No se usa `streamlit-geolocation`: el botón usa el componente propio de ADR-007 en modo `once`. ADR-004 pasa a Superseded. | El paquete no tiene versiones desde 2023-11-18 y SEC-22 exige revisarlo; el componente propio no añade dependencias. |
