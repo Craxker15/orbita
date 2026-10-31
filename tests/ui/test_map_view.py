@@ -122,7 +122,7 @@ def test_the_bundled_countries_file_has_the_country_outlines() -> None:
     assert len(features) >= 170
 
 
-EARTH_PHOTO = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpg")
+EARTH_PHOTO = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpeg")
 
 
 def test_deck_draws_the_earth_photo_under_everything_when_given() -> None:
@@ -134,7 +134,7 @@ def test_deck_draws_the_earth_photo_under_everything_when_given() -> None:
 
 def test_the_earth_photo_is_embedded_in_the_map() -> None:
     """pydeck embeds a local image as a data URI; a web path fails (found in the app)."""
-    photo = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpg")
+    photo = str(Path(__file__).resolve().parents[2] / "assets" / "earth_texture.jpeg")
     deck = build_deck(view(), None, {"type": "FeatureCollection", "features": []}, photo)
-    assert "data:image/jpg;base64," in deck.to_json()  # pydeck uses the file extension
+    assert "data:image/jpeg;base64," in deck.to_json()  # .jpeg gives the standard MIME type
 

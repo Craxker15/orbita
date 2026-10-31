@@ -29,7 +29,7 @@ REPO_ROOT: Final = Path(__file__).resolve().parents[2]
 ENV_FILE: Final = REPO_ROOT / ".env"
 TEXTS_FILE: Final = REPO_ROOT / "locales" / "es.json"
 BASEMAP_FILE: Final = REPO_ROOT / "assets" / "ne_110m_countries.geojson"
-EARTH_FILE: Final = REPO_ROOT / "assets" / "earth_texture.jpg"
+EARTH_FILE: Final = REPO_ROOT / "assets" / "earth_texture.jpeg"
 LOG_FORMAT: Final = "%(asctime)s %(levelname)s %(name)s %(message)s"
 
 logger = logging.getLogger(__name__)
