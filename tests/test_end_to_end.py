@@ -1,4 +1,4 @@
-"""End-to-end test: runs the Streamlit script with no network and with saved data (spec 017, RF-05, RF-06, SEC-25)."""
+"""End-to-end test: runs the Streamlit script with no network and saved data (spec 017, SEC-25)."""
 
 from __future__ import annotations
 

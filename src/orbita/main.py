@@ -1,6 +1,6 @@
-"""Composition root and entry point: builds the adapters and the use cases once, then starts the page.
+r"""Composition root and entry point: builds the adapters and use cases once, then starts the page.
 
-Run from the project folder with: uv run streamlit run src\\orbita\\main.py
+Run from the project folder with: uv run streamlit run src\orbita\main.py
 This is the only module that knows every layer (ARCHITECTURE.md §2, rules 5 and 6).
 """
 
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 def build_dependencies(
     data_dir: Path, refresh_seconds: int, source: SatelliteDataSource | None = None
 ) -> PageDependencies:
-    """Create every adapter and use case once, with their ports injected (ARCHITECTURE.md §6, rule 7).
+    """Create every adapter and use case once, with their ports injected (ARCHITECTURE.md §6).
 
     Preconditions: data_dir is a validated path inside the project (SEC-11).
     Postconditions: the only network client is the one given to CelestrakSource (SEC-15).
@@ -57,16 +57,16 @@ def build_dependencies(
 
 @st.cache_resource
 def _cached_dependencies(data_dir: str, refresh_seconds: int) -> PageDependencies:
-    """Build the object graph once per process: Streamlit runs this script again on every interaction."""
+    """Build the object graph once per process; Streamlit reruns this script on every interaction."""
     return build_dependencies(Path(data_dir), refresh_seconds)
 
 
 def main() -> None:
     """Read the configuration and draw the page.
 
-    A configuration error stops the start before anything is drawn, with the variable name in the traceback (SEC-09).
-    Any other failure is logged and shown with the unexpected_error text, so the page never shows a stack trace
-    to the visitor (ARCHITECTURE.md §6).
+    A configuration error stops the start before anything is drawn, with the variable name in the
+    traceback (SEC-09). Any other failure is logged and shown with the unexpected_error text, so the
+    page never shows a stack trace to the visitor (ARCHITECTURE.md §6).
     """
     settings = load_settings(os.environ, ENV_FILE, REPO_ROOT)
     logging.basicConfig(level=settings.log_level, format=LOG_FORMAT)
